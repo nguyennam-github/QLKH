@@ -2798,296 +2798,312 @@ public final class Main extends javax.swing.JPanel implements ListSelectionListe
     }//GEN-LAST:event_filter__RegisterDateMaxFocusGained
 
     private void toolbar__SearchStringInputKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_toolbar__SearchStringInputKeyPressed
-        if (toolbar__SearchInput.getSelectedItem().toString().equals(ID)){
-            if (accessPage == PAGES_HOME){
-                appController.setProductsTable(productsTable, ProductServices.getInstance().filterById(toolbar__SearchStringInput.getText()));
-            }
-            if (accessPage == PAGES_PRODUCTS){
-                filter(ProductServices.getInstance().filterById(toolbar__SearchStringInput.getText()));
-                productSearchModify = true;
-            }
-        }
-        if (toolbar__SearchInput.getSelectedItem().toString().equals(NAME)){
-            if (accessPage == PAGES_HOME){
-                appController.setProductsTable(productsTable, ProductServices.getInstance().filterByName(toolbar__SearchStringInput.getText()));
-            }
-            if (accessPage == PAGES_PRODUCTS){
-                filter(ProductServices.getInstance().filterByName(toolbar__SearchStringInput.getText()));
-                productSearchModify = true;
-            }
-        }
-        if (toolbar__SearchInput.getSelectedItem().toString().equals(CATEGORY)){
-            if (accessPage == PAGES_HOME){
-                appController.setProductsTable(productsTable, ProductServices.getInstance().filterByCategory(toolbar__SearchStringInput.getText()));
-            }
-            if (accessPage == PAGES_PRODUCTS){
-                filter(ProductServices.getInstance().filterByCategory(toolbar__SearchStringInput.getText()));
-                productSearchModify = true;
-            }
-        }
-        if (toolbar__SearchInput.getSelectedItem().toString().equals(MANAFACTURER)){
-            if (accessPage == PAGES_HOME){
-                appController.setProductsTable(productsTable, ProductServices.getInstance().filterByManafacturer(toolbar__SearchStringInput.getText()));
-            }
-            if (accessPage == PAGES_PRODUCTS){
-                filter(ProductServices.getInstance().filterByManafacturer(toolbar__SearchStringInput.getText()));
-                productSearchModify = true;
-            }
-        }
-        if (toolbar__SearchInput.getSelectedItem().toString().equals(PRICE)){
-            BigDecimal minPrice = new BigDecimal(toolbar__SearchMinInput.getText());
-            BigDecimal maxPrice = new BigDecimal(toolbar__SearchMaxInput.getText());
-            if (accessPage == PAGES_HOME){
-                appController.setProductsTable(productsTable, ProductServices.getInstance().filterByPrice(minPrice, maxPrice));
-            }
-            if (accessPage == PAGES_PRODUCTS){
-                filter(ProductServices.getInstance().filterByPrice(minPrice, maxPrice));
-                productSearchModify = true;
-            }
-        }
-        if (toolbar__SearchInput.getSelectedItem().toString().equals(EXPIRY)){
-            try {
-                Date minDate = new SimpleDateFormat(DATE_FORMAT).parse(toolbar__SearchMinInput.getText());
-                Date maxDate = new SimpleDateFormat(DATE_FORMAT).parse(toolbar__SearchMaxInput.getText());
+        if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
+            if (toolbar__SearchInput.getSelectedItem().toString().equals(ID)){
                 if (accessPage == PAGES_HOME){
-                    appController.setProductsTable(productsTable, ProductServices.getInstance().filterByExpiry(minDate, maxDate));
+                    appController.setProductsTable(productsTable, ProductServices.getInstance().filterById(toolbar__SearchStringInput.getText()));
                 }
                 if (accessPage == PAGES_PRODUCTS){
-                    filter(ProductServices.getInstance().filterByExpiry(minDate, maxDate));
+                    filter(ProductServices.getInstance().filterById(toolbar__SearchStringInput.getText()));
                     productSearchModify = true;
                 }
-            } catch (ParseException  e) {
-                showMessage(EXPIRY_FORMAT_ERROR_DIALOG_MESSAGE, false);
             }
+            if (toolbar__SearchInput.getSelectedItem().toString().equals(NAME)){
+                if (accessPage == PAGES_HOME){
+                    appController.setProductsTable(productsTable, ProductServices.getInstance().filterByName(toolbar__SearchStringInput.getText()));
+                }
+                if (accessPage == PAGES_PRODUCTS){
+                    filter(ProductServices.getInstance().filterByName(toolbar__SearchStringInput.getText()));
+                    productSearchModify = true;
+                }
+            }
+            if (toolbar__SearchInput.getSelectedItem().toString().equals(CATEGORY)){
+                if (accessPage == PAGES_HOME){
+                    appController.setProductsTable(productsTable, ProductServices.getInstance().filterByCategory(toolbar__SearchStringInput.getText()));
+                }
+                if (accessPage == PAGES_PRODUCTS){
+                    filter(ProductServices.getInstance().filterByCategory(toolbar__SearchStringInput.getText()));
+                    productSearchModify = true;
+                }
+            }
+            if (toolbar__SearchInput.getSelectedItem().toString().equals(MANAFACTURER)){
+                if (accessPage == PAGES_HOME){
+                    appController.setProductsTable(productsTable, ProductServices.getInstance().filterByManafacturer(toolbar__SearchStringInput.getText()));
+                }
+                if (accessPage == PAGES_PRODUCTS){
+                    filter(ProductServices.getInstance().filterByManafacturer(toolbar__SearchStringInput.getText()));
+                    productSearchModify = true;
+                }
+            }
+            if (toolbar__SearchInput.getSelectedItem().toString().equals(PRICE)){
+                BigDecimal minPrice = new BigDecimal(toolbar__SearchMinInput.getText());
+                BigDecimal maxPrice = new BigDecimal(toolbar__SearchMaxInput.getText());
+                if (accessPage == PAGES_HOME){
+                    appController.setProductsTable(productsTable, ProductServices.getInstance().filterByPrice(minPrice, maxPrice));
+                }
+                if (accessPage == PAGES_PRODUCTS){
+                    filter(ProductServices.getInstance().filterByPrice(minPrice, maxPrice));
+                    productSearchModify = true;
+                }
+            }
+            if (toolbar__SearchInput.getSelectedItem().toString().equals(EXPIRY)){
+                try {
+                    Date minDate = new SimpleDateFormat(DATE_FORMAT).parse(toolbar__SearchMinInput.getText());
+                    Date maxDate = new SimpleDateFormat(DATE_FORMAT).parse(toolbar__SearchMaxInput.getText());
+                    if (accessPage == PAGES_HOME){
+                        appController.setProductsTable(productsTable, ProductServices.getInstance().filterByExpiry(minDate, maxDate));
+                    }
+                    if (accessPage == PAGES_PRODUCTS){
+                        filter(ProductServices.getInstance().filterByExpiry(minDate, maxDate));
+                        productSearchModify = true;
+                    }
+                } catch (ParseException  e) {
+                    showMessage(EXPIRY_FORMAT_ERROR_DIALOG_MESSAGE, false);
+                }
+            }
+            products__Scroll.getVerticalScrollBar().setValue(0);
+            if (accessPage == PAGES_PRODUCTS){
+                    CardLayout c = (CardLayout) main__Pages.getLayout();
+                    c.show(main__Pages, CARD_PRODUCTS);
+            }
+            initSearchField();
         }
-        products__Scroll.getVerticalScrollBar().setValue(0);
-        if (accessPage == PAGES_PRODUCTS){
-                CardLayout c = (CardLayout) main__Pages.getLayout();
-                c.show(main__Pages, CARD_PRODUCTS);
-        }
-        initSearchField();
     }//GEN-LAST:event_toolbar__SearchStringInputKeyPressed
 
     private void toolbar__SearchMinInputKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_toolbar__SearchMinInputKeyPressed
-        if (toolbar__SearchInput.getSelectedItem().toString().equals(ID)){
-            if (accessPage == PAGES_HOME){
-                appController.setProductsTable(productsTable, ProductServices.getInstance().filterById(toolbar__SearchStringInput.getText()));
-            }
-            if (accessPage == PAGES_PRODUCTS){
-                filter(ProductServices.getInstance().filterById(toolbar__SearchStringInput.getText()));
-                productSearchModify = true;
-            }
-        }
-        if (toolbar__SearchInput.getSelectedItem().toString().equals(NAME)){
-            if (accessPage == PAGES_HOME){
-                appController.setProductsTable(productsTable, ProductServices.getInstance().filterByName(toolbar__SearchStringInput.getText()));
-            }
-            if (accessPage == PAGES_PRODUCTS){
-                filter(ProductServices.getInstance().filterByName(toolbar__SearchStringInput.getText()));
-                productSearchModify = true;
-            }
-        }
-        if (toolbar__SearchInput.getSelectedItem().toString().equals(CATEGORY)){
-            if (accessPage == PAGES_HOME){
-                appController.setProductsTable(productsTable, ProductServices.getInstance().filterByCategory(toolbar__SearchStringInput.getText()));
-            }
-            if (accessPage == PAGES_PRODUCTS){
-                filter(ProductServices.getInstance().filterByCategory(toolbar__SearchStringInput.getText()));
-                productSearchModify = true;
-            }
-        }
-        if (toolbar__SearchInput.getSelectedItem().toString().equals(MANAFACTURER)){
-            if (accessPage == PAGES_HOME){
-                appController.setProductsTable(productsTable, ProductServices.getInstance().filterByManafacturer(toolbar__SearchStringInput.getText()));
-            }
-            if (accessPage == PAGES_PRODUCTS){
-                filter(ProductServices.getInstance().filterByManafacturer(toolbar__SearchStringInput.getText()));
-                productSearchModify = true;
-            }
-        }
-        if (toolbar__SearchInput.getSelectedItem().toString().equals(PRICE)){
-            BigDecimal minPrice = new BigDecimal(toolbar__SearchMinInput.getText());
-            BigDecimal maxPrice = new BigDecimal(toolbar__SearchMaxInput.getText());
-            if (accessPage == PAGES_HOME){
-                appController.setProductsTable(productsTable, ProductServices.getInstance().filterByPrice(minPrice, maxPrice));
-            }
-            if (accessPage == PAGES_PRODUCTS){
-                filter(ProductServices.getInstance().filterByPrice(minPrice, maxPrice));
-                productSearchModify = true;
-            }
-        }
-        if (toolbar__SearchInput.getSelectedItem().toString().equals(EXPIRY)){
-            try {
-                Date minDate = new SimpleDateFormat(DATE_FORMAT).parse(toolbar__SearchMinInput.getText());
-                Date maxDate = new SimpleDateFormat(DATE_FORMAT).parse(toolbar__SearchMaxInput.getText());
+        if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
+            if (toolbar__SearchInput.getSelectedItem().toString().equals(ID)){
                 if (accessPage == PAGES_HOME){
-                    appController.setProductsTable(productsTable, ProductServices.getInstance().filterByExpiry(minDate, maxDate));
+                    appController.setProductsTable(productsTable, ProductServices.getInstance().filterById(toolbar__SearchStringInput.getText()));
                 }
                 if (accessPage == PAGES_PRODUCTS){
-                    filter(ProductServices.getInstance().filterByExpiry(minDate, maxDate));
+                    filter(ProductServices.getInstance().filterById(toolbar__SearchStringInput.getText()));
                     productSearchModify = true;
                 }
-            } catch (ParseException  e) {
-                showMessage(EXPIRY_FORMAT_ERROR_DIALOG_MESSAGE, false);
             }
+            if (toolbar__SearchInput.getSelectedItem().toString().equals(NAME)){
+                if (accessPage == PAGES_HOME){
+                    appController.setProductsTable(productsTable, ProductServices.getInstance().filterByName(toolbar__SearchStringInput.getText()));
+                }
+                if (accessPage == PAGES_PRODUCTS){
+                    filter(ProductServices.getInstance().filterByName(toolbar__SearchStringInput.getText()));
+                    productSearchModify = true;
+                }
+            }
+            if (toolbar__SearchInput.getSelectedItem().toString().equals(CATEGORY)){
+                if (accessPage == PAGES_HOME){
+                    appController.setProductsTable(productsTable, ProductServices.getInstance().filterByCategory(toolbar__SearchStringInput.getText()));
+                }
+                if (accessPage == PAGES_PRODUCTS){
+                    filter(ProductServices.getInstance().filterByCategory(toolbar__SearchStringInput.getText()));
+                    productSearchModify = true;
+                }
+            }
+            if (toolbar__SearchInput.getSelectedItem().toString().equals(MANAFACTURER)){
+                if (accessPage == PAGES_HOME){
+                    appController.setProductsTable(productsTable, ProductServices.getInstance().filterByManafacturer(toolbar__SearchStringInput.getText()));
+                }
+                if (accessPage == PAGES_PRODUCTS){
+                    filter(ProductServices.getInstance().filterByManafacturer(toolbar__SearchStringInput.getText()));
+                    productSearchModify = true;
+                }
+            }
+            if (toolbar__SearchInput.getSelectedItem().toString().equals(PRICE)){
+                BigDecimal minPrice = new BigDecimal(toolbar__SearchMinInput.getText());
+                BigDecimal maxPrice = new BigDecimal(toolbar__SearchMaxInput.getText());
+                if (accessPage == PAGES_HOME){
+                    appController.setProductsTable(productsTable, ProductServices.getInstance().filterByPrice(minPrice, maxPrice));
+                }
+                if (accessPage == PAGES_PRODUCTS){
+                    filter(ProductServices.getInstance().filterByPrice(minPrice, maxPrice));
+                    productSearchModify = true;
+                }
+            }
+            if (toolbar__SearchInput.getSelectedItem().toString().equals(EXPIRY)){
+                try {
+                    Date minDate = new SimpleDateFormat(DATE_FORMAT).parse(toolbar__SearchMinInput.getText());
+                    Date maxDate = new SimpleDateFormat(DATE_FORMAT).parse(toolbar__SearchMaxInput.getText());
+                    if (accessPage == PAGES_HOME){
+                        appController.setProductsTable(productsTable, ProductServices.getInstance().filterByExpiry(minDate, maxDate));
+                    }
+                    if (accessPage == PAGES_PRODUCTS){
+                        filter(ProductServices.getInstance().filterByExpiry(minDate, maxDate));
+                        productSearchModify = true;
+                    }
+                } catch (ParseException  e) {
+                    showMessage(EXPIRY_FORMAT_ERROR_DIALOG_MESSAGE, false);
+                }
+            }
+            products__Scroll.getVerticalScrollBar().setValue(0);
+            if (accessPage == PAGES_PRODUCTS){
+                    CardLayout c = (CardLayout) main__Pages.getLayout();
+                    c.show(main__Pages, CARD_PRODUCTS);
+            }
+            initSearchField();
         }
-        products__Scroll.getVerticalScrollBar().setValue(0);
-        if (accessPage == PAGES_PRODUCTS){
-                CardLayout c = (CardLayout) main__Pages.getLayout();
-                c.show(main__Pages, CARD_PRODUCTS);
-        }
-        initSearchField();
     }//GEN-LAST:event_toolbar__SearchMinInputKeyPressed
 
     private void toolbar__SearchMaxInputKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_toolbar__SearchMaxInputKeyPressed
-        if (toolbar__SearchInput.getSelectedItem().toString().equals(ID)){
-            if (accessPage == PAGES_HOME){
-                appController.setProductsTable(productsTable, ProductServices.getInstance().filterById(toolbar__SearchStringInput.getText()));
-            }
-            if (accessPage == PAGES_PRODUCTS){
-                filter(ProductServices.getInstance().filterById(toolbar__SearchStringInput.getText()));
-                productSearchModify = true;
-            }
-        }
-        if (toolbar__SearchInput.getSelectedItem().toString().equals(NAME)){
-            if (accessPage == PAGES_HOME){
-                appController.setProductsTable(productsTable, ProductServices.getInstance().filterByName(toolbar__SearchStringInput.getText()));
-            }
-            if (accessPage == PAGES_PRODUCTS){
-                filter(ProductServices.getInstance().filterByName(toolbar__SearchStringInput.getText()));
-                productSearchModify = true;
-            }
-        }
-        if (toolbar__SearchInput.getSelectedItem().toString().equals(CATEGORY)){
-            if (accessPage == PAGES_HOME){
-                appController.setProductsTable(productsTable, ProductServices.getInstance().filterByCategory(toolbar__SearchStringInput.getText()));
-            }
-            if (accessPage == PAGES_PRODUCTS){
-                filter(ProductServices.getInstance().filterByCategory(toolbar__SearchStringInput.getText()));
-                productSearchModify = true;
-            }
-        }
-        if (toolbar__SearchInput.getSelectedItem().toString().equals(MANAFACTURER)){
-            if (accessPage == PAGES_HOME){
-                appController.setProductsTable(productsTable, ProductServices.getInstance().filterByManafacturer(toolbar__SearchStringInput.getText()));
-            }
-            if (accessPage == PAGES_PRODUCTS){
-                filter(ProductServices.getInstance().filterByManafacturer(toolbar__SearchStringInput.getText()));
-                productSearchModify = true;
-            }
-        }
-        if (toolbar__SearchInput.getSelectedItem().toString().equals(PRICE)){
-            BigDecimal minPrice = new BigDecimal(toolbar__SearchMinInput.getText());
-            BigDecimal maxPrice = new BigDecimal(toolbar__SearchMaxInput.getText());
-            if (accessPage == PAGES_HOME){
-                appController.setProductsTable(productsTable, ProductServices.getInstance().filterByPrice(minPrice, maxPrice));
-            }
-            if (accessPage == PAGES_PRODUCTS){
-                filter(ProductServices.getInstance().filterByPrice(minPrice, maxPrice));
-                productSearchModify = true;
-            }
-        }
-        if (toolbar__SearchInput.getSelectedItem().toString().equals(EXPIRY)){
-            try {
-                Date minDate = new SimpleDateFormat(DATE_FORMAT).parse(toolbar__SearchMinInput.getText());
-                Date maxDate = new SimpleDateFormat(DATE_FORMAT).parse(toolbar__SearchMaxInput.getText());
+        if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
+            if (toolbar__SearchInput.getSelectedItem().toString().equals(ID)){
                 if (accessPage == PAGES_HOME){
-                    appController.setProductsTable(productsTable, ProductServices.getInstance().filterByExpiry(minDate, maxDate));
+                    appController.setProductsTable(productsTable, ProductServices.getInstance().filterById(toolbar__SearchStringInput.getText()));
                 }
                 if (accessPage == PAGES_PRODUCTS){
-                    filter(ProductServices.getInstance().filterByExpiry(minDate, maxDate));
+                    filter(ProductServices.getInstance().filterById(toolbar__SearchStringInput.getText()));
                     productSearchModify = true;
                 }
-            } catch (ParseException  e) {
-                showMessage(EXPIRY_FORMAT_ERROR_DIALOG_MESSAGE, false);
             }
+            if (toolbar__SearchInput.getSelectedItem().toString().equals(NAME)){
+                if (accessPage == PAGES_HOME){
+                    appController.setProductsTable(productsTable, ProductServices.getInstance().filterByName(toolbar__SearchStringInput.getText()));
+                }
+                if (accessPage == PAGES_PRODUCTS){
+                    filter(ProductServices.getInstance().filterByName(toolbar__SearchStringInput.getText()));
+                    productSearchModify = true;
+                }
+            }
+            if (toolbar__SearchInput.getSelectedItem().toString().equals(CATEGORY)){
+                if (accessPage == PAGES_HOME){
+                    appController.setProductsTable(productsTable, ProductServices.getInstance().filterByCategory(toolbar__SearchStringInput.getText()));
+                }
+                if (accessPage == PAGES_PRODUCTS){
+                    filter(ProductServices.getInstance().filterByCategory(toolbar__SearchStringInput.getText()));
+                    productSearchModify = true;
+                }
+            }
+            if (toolbar__SearchInput.getSelectedItem().toString().equals(MANAFACTURER)){
+                if (accessPage == PAGES_HOME){
+                    appController.setProductsTable(productsTable, ProductServices.getInstance().filterByManafacturer(toolbar__SearchStringInput.getText()));
+                }
+                if (accessPage == PAGES_PRODUCTS){
+                    filter(ProductServices.getInstance().filterByManafacturer(toolbar__SearchStringInput.getText()));
+                    productSearchModify = true;
+                }
+            }
+            if (toolbar__SearchInput.getSelectedItem().toString().equals(PRICE)){
+                BigDecimal minPrice = new BigDecimal(toolbar__SearchMinInput.getText());
+                BigDecimal maxPrice = new BigDecimal(toolbar__SearchMaxInput.getText());
+                if (accessPage == PAGES_HOME){
+                    appController.setProductsTable(productsTable, ProductServices.getInstance().filterByPrice(minPrice, maxPrice));
+                }
+                if (accessPage == PAGES_PRODUCTS){
+                    filter(ProductServices.getInstance().filterByPrice(minPrice, maxPrice));
+                    productSearchModify = true;
+                }
+            }
+            if (toolbar__SearchInput.getSelectedItem().toString().equals(EXPIRY)){
+                try {
+                    Date minDate = new SimpleDateFormat(DATE_FORMAT).parse(toolbar__SearchMinInput.getText());
+                    Date maxDate = new SimpleDateFormat(DATE_FORMAT).parse(toolbar__SearchMaxInput.getText());
+                    if (accessPage == PAGES_HOME){
+                        appController.setProductsTable(productsTable, ProductServices.getInstance().filterByExpiry(minDate, maxDate));
+                    }
+                    if (accessPage == PAGES_PRODUCTS){
+                        filter(ProductServices.getInstance().filterByExpiry(minDate, maxDate));
+                        productSearchModify = true;
+                    }
+                } catch (ParseException  e) {
+                    showMessage(EXPIRY_FORMAT_ERROR_DIALOG_MESSAGE, false);
+                }
+            }
+            products__Scroll.getVerticalScrollBar().setValue(0);
+            if (accessPage == PAGES_PRODUCTS){
+                    CardLayout c = (CardLayout) main__Pages.getLayout();
+                    c.show(main__Pages, CARD_PRODUCTS);
+            }
+            initSearchField();
         }
-        products__Scroll.getVerticalScrollBar().setValue(0);
-        if (accessPage == PAGES_PRODUCTS){
-                CardLayout c = (CardLayout) main__Pages.getLayout();
-                c.show(main__Pages, CARD_PRODUCTS);
-        }
-        initSearchField();
     }//GEN-LAST:event_toolbar__SearchMaxInputKeyPressed
 
     private void filter__UsernameInputKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_filter__UsernameInputKeyPressed
-        String username = filter__UsernameInput.getText();
-        Date dateMin = null;
-        Date dateMax = null;
-        if (!filter__RegisterDateMin.getText().equals("") && !filter__RegisterDateMax.getText().equals("")){
-            try {
-                dateMin = new SimpleDateFormat(DATE_FORMAT).parse(filter__RegisterDateMin.getText());
-                dateMax = new SimpleDateFormat(DATE_FORMAT).parse(filter__RegisterDateMax.getText());
-            } catch (ParseException e) {
-                showMessage(CREATE_FORMAT_ERROR_DIALOG_MESSAGE, false);
+        if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
+            String username = filter__UsernameInput.getText();
+            Date dateMin = null;
+            Date dateMax = null;
+            if (!filter__RegisterDateMin.getText().equals("") && !filter__RegisterDateMax.getText().equals("")){
+                try {
+                    dateMin = new SimpleDateFormat(DATE_FORMAT).parse(filter__RegisterDateMin.getText());
+                    dateMax = new SimpleDateFormat(DATE_FORMAT).parse(filter__RegisterDateMax.getText());
+                } catch (ParseException e) {
+                    showMessage(CREATE_FORMAT_ERROR_DIALOG_MESSAGE, false);
+                }
             }
+            adminController.setUsersTable(usersTable, UserServices.getInstance().filter(username, dateMin, dateMax, filter__ReadInput.isSelected(), filter__WriteInput.isSelected()));
+            resetUserEdit();
         }
-        adminController.setUsersTable(usersTable, UserServices.getInstance().filter(username, dateMin, dateMax, filter__ReadInput.isSelected(), filter__WriteInput.isSelected()));
-        resetUserEdit();
     }//GEN-LAST:event_filter__UsernameInputKeyPressed
 
     private void filter__RegisterDateMinKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_filter__RegisterDateMinKeyPressed
-        String username = filter__UsernameInput.getText();
-        Date dateMin = null;
-        Date dateMax = null;
-        if (!filter__RegisterDateMin.getText().equals("") && !filter__RegisterDateMax.getText().equals("")){
-            try {
-                dateMin = new SimpleDateFormat(DATE_FORMAT).parse(filter__RegisterDateMin.getText());
-                dateMax = new SimpleDateFormat(DATE_FORMAT).parse(filter__RegisterDateMax.getText());
-            } catch (ParseException e) {
-                showMessage(CREATE_FORMAT_ERROR_DIALOG_MESSAGE, false);
+        if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
+            String username = filter__UsernameInput.getText();
+            Date dateMin = null;
+            Date dateMax = null;
+            if (!filter__RegisterDateMin.getText().equals("") && !filter__RegisterDateMax.getText().equals("")){
+                try {
+                    dateMin = new SimpleDateFormat(DATE_FORMAT).parse(filter__RegisterDateMin.getText());
+                    dateMax = new SimpleDateFormat(DATE_FORMAT).parse(filter__RegisterDateMax.getText());
+                } catch (ParseException e) {
+                    showMessage(CREATE_FORMAT_ERROR_DIALOG_MESSAGE, false);
+                }
             }
+            adminController.setUsersTable(usersTable, UserServices.getInstance().filter(username, dateMin, dateMax, filter__ReadInput.isSelected(), filter__WriteInput.isSelected()));
+            resetUserEdit();
         }
-        adminController.setUsersTable(usersTable, UserServices.getInstance().filter(username, dateMin, dateMax, filter__ReadInput.isSelected(), filter__WriteInput.isSelected()));
-        resetUserEdit();
     }//GEN-LAST:event_filter__RegisterDateMinKeyPressed
 
     private void filter__RegisterDateMaxKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_filter__RegisterDateMaxKeyPressed
-        String username = filter__UsernameInput.getText();
-        Date dateMin = null;
-        Date dateMax = null;
-        if (!filter__RegisterDateMin.getText().equals("") && !filter__RegisterDateMax.getText().equals("")){
-            try {
-                dateMin = new SimpleDateFormat(DATE_FORMAT).parse(filter__RegisterDateMin.getText());
-                dateMax = new SimpleDateFormat(DATE_FORMAT).parse(filter__RegisterDateMax.getText());
-            } catch (ParseException e) {
-                showMessage(CREATE_FORMAT_ERROR_DIALOG_MESSAGE, false);
+        if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
+            String username = filter__UsernameInput.getText();
+            Date dateMin = null;
+            Date dateMax = null;
+            if (!filter__RegisterDateMin.getText().equals("") && !filter__RegisterDateMax.getText().equals("")){
+                try {
+                    dateMin = new SimpleDateFormat(DATE_FORMAT).parse(filter__RegisterDateMin.getText());
+                    dateMax = new SimpleDateFormat(DATE_FORMAT).parse(filter__RegisterDateMax.getText());
+                } catch (ParseException e) {
+                    showMessage(CREATE_FORMAT_ERROR_DIALOG_MESSAGE, false);
+                }
             }
+            adminController.setUsersTable(usersTable, UserServices.getInstance().filter(username, dateMin, dateMax, filter__ReadInput.isSelected(), filter__WriteInput.isSelected()));
+            resetUserEdit();
         }
-        adminController.setUsersTable(usersTable, UserServices.getInstance().filter(username, dateMin, dateMax, filter__ReadInput.isSelected(), filter__WriteInput.isSelected()));
-        resetUserEdit();
     }//GEN-LAST:event_filter__RegisterDateMaxKeyPressed
 
     private void filter__ReadInputKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_filter__ReadInputKeyPressed
-        String username = filter__UsernameInput.getText();
-        Date dateMin = null;
-        Date dateMax = null;
-        if (!filter__RegisterDateMin.getText().equals("") && !filter__RegisterDateMax.getText().equals("")){
-            try {
-                dateMin = new SimpleDateFormat(DATE_FORMAT).parse(filter__RegisterDateMin.getText());
-                dateMax = new SimpleDateFormat(DATE_FORMAT).parse(filter__RegisterDateMax.getText());
-            } catch (ParseException e) {
-                showMessage(CREATE_FORMAT_ERROR_DIALOG_MESSAGE, false);
+        if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
+            String username = filter__UsernameInput.getText();
+            Date dateMin = null;
+            Date dateMax = null;
+            if (!filter__RegisterDateMin.getText().equals("") && !filter__RegisterDateMax.getText().equals("")){
+                try {
+                    dateMin = new SimpleDateFormat(DATE_FORMAT).parse(filter__RegisterDateMin.getText());
+                    dateMax = new SimpleDateFormat(DATE_FORMAT).parse(filter__RegisterDateMax.getText());
+                } catch (ParseException e) {
+                    showMessage(CREATE_FORMAT_ERROR_DIALOG_MESSAGE, false);
+                }
             }
+            adminController.setUsersTable(usersTable, UserServices.getInstance().filter(username, dateMin, dateMax, filter__ReadInput.isSelected(), filter__WriteInput.isSelected()));
+            resetUserEdit();
         }
-        adminController.setUsersTable(usersTable, UserServices.getInstance().filter(username, dateMin, dateMax, filter__ReadInput.isSelected(), filter__WriteInput.isSelected()));
-        resetUserEdit();
     }//GEN-LAST:event_filter__ReadInputKeyPressed
 
     private void filter__WriteInputKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_filter__WriteInputKeyPressed
-        String username = filter__UsernameInput.getText();
-        Date dateMin = null;
-        Date dateMax = null;
-        if (!filter__RegisterDateMin.getText().equals("") && !filter__RegisterDateMax.getText().equals("")){
-            try {
-                dateMin = new SimpleDateFormat(DATE_FORMAT).parse(filter__RegisterDateMin.getText());
-                dateMax = new SimpleDateFormat(DATE_FORMAT).parse(filter__RegisterDateMax.getText());
-            } catch (ParseException e) {
-                showMessage(CREATE_FORMAT_ERROR_DIALOG_MESSAGE, false);
+        if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
+            String username = filter__UsernameInput.getText();
+            Date dateMin = null;
+            Date dateMax = null;
+            if (!filter__RegisterDateMin.getText().equals("") && !filter__RegisterDateMax.getText().equals("")){
+                try {
+                    dateMin = new SimpleDateFormat(DATE_FORMAT).parse(filter__RegisterDateMin.getText());
+                    dateMax = new SimpleDateFormat(DATE_FORMAT).parse(filter__RegisterDateMax.getText());
+                } catch (ParseException e) {
+                    showMessage(CREATE_FORMAT_ERROR_DIALOG_MESSAGE, false);
+                }
             }
+            adminController.setUsersTable(usersTable, UserServices.getInstance().filter(username, dateMin, dateMax, filter__ReadInput.isSelected(), filter__WriteInput.isSelected()));
+            resetUserEdit();
         }
-        adminController.setUsersTable(usersTable, UserServices.getInstance().filter(username, dateMin, dateMax, filter__ReadInput.isSelected(), filter__WriteInput.isSelected()));
-        resetUserEdit();
     }//GEN-LAST:event_filter__WriteInputKeyPressed
 
 
