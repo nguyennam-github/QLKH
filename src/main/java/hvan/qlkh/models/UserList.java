@@ -16,9 +16,11 @@ import javax.xml.bind.annotation.XmlRootElement;
  */
 @XmlRootElement(name = "users")
 @XmlAccessorType(XmlAccessType.FIELD)
+
 public class UserList {
 
-    private static UserList ul;
+    private static UserList instance;
+    
     @XmlElement(name = "user")
     private List<User> users;
 
@@ -26,10 +28,10 @@ public class UserList {
     }
 
     public static UserList getInstance(){
-        if (ul == null){
-            ul = new UserList();
+        if (instance == null){
+            instance = new UserList();
         }
-        return ul;
+        return instance;
     }
 
     public List<User> getUsers() {

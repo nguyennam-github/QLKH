@@ -23,7 +23,7 @@ public class UserServices {
     private UserServices() {
     }
 
-    public static synchronized UserServices getInstance(){
+    public static UserServices getInstance(){
         if(instance == null){
             instance = new UserServices();
         }
@@ -42,21 +42,22 @@ public class UserServices {
         return UserDAO.getInstance().readUsers();
     }
 
-    public User getSelectedUser() {
+    public static User getSelectedUser() {
         return selectedUser;
     }
 
-    public void setSelectedUser(User selectedUser) {
+    public static void setSelectedUser(User selectedUser) {
         UserServices.selectedUser = selectedUser;
     }
 
-    public User findByName(String username){
+    public User findByUsername(String username){
         return getUsers().stream()
             .filter(temp -> username.equals(temp.getUsername()))
             .findAny()
             .orElse(null);
     }
     
+    @SuppressWarnings("deprecation")
     public List<User> filter(String username, Date dateMin, Date dateMax, boolean read, boolean write){
         List<User> temp = getUsers();
         if (!username.equals("")){
@@ -73,9 +74,23 @@ public class UserServices {
                     .filter(user -> user.getRegister().compareTo(dateMax) <= 0)
                     .collect(Collectors.toList());
         }
-        return temp.stream()
-                .filter(user -> user.isRead() == read)
-                .filter(user -> user.isWrite() == write)
-                .collect(Collectors.toList());
+        if (read){
+            if (write){
+                return temp.stream()
+                    .filter(user -> user.isWrite() == write)
+                    .collect(Collectors.toList());
+            }
+            else{
+                return temp.stream()
+                    .filter(user -> user.isRead() == read)
+                    .collect(Collectors.toList());
+            }
+        }
+        else{
+            return temp.stream()
+                    .filter(user -> user.isRead() == read)
+                    .filter(user -> user.isWrite() == write)
+                    .collect(Collectors.toList());
+        }
     }
 }

@@ -29,7 +29,7 @@ public class ProductServices{
     private ProductServices() {
     }
 
-    public static synchronized ProductServices getInstance(){
+    public static ProductServices getInstance(){
         if(instance == null){
             instance = new ProductServices();
         }

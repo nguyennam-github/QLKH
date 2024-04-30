@@ -18,9 +18,11 @@ import javax.xml.bind.annotation.XmlRootElement;
  */
 @XmlRootElement(name = "product")
 @XmlAccessorType(XmlAccessType.FIELD)
+
 public class Product implements Serializable{
 
     private static final long serialVersionUID = 1L;
+    
     @XmlElement(name = "id")
     private String id;
     @XmlElement(name = "name")
@@ -39,6 +41,7 @@ public class Product implements Serializable{
     private String thumbnail;
     @XmlElement(name = "description")
     private String description;
+    
     public Product() {
     }
 

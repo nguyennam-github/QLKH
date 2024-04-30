@@ -8,9 +8,7 @@ import hvan.qlkh.models.Product;
 import hvan.qlkh.models.ProductList;
 import hvan.qlkh.services.ProductServices;
 import hvan.qlkh.utils.FileUtils;
-import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -33,29 +31,19 @@ public final class ProductDAO {
         }
         return instance;
     }
-    /**
-     * Lưu các đối tượng user vào file product.xml
-     *
-     */
+
     public void writeProducts() {
         ProductList pl = ProductList.getInstance();
         pl.setProducts(products);
         FileUtils.writeXMLtoFile(XMLFILE_PATH, pl);
     }
 
-    /**
-     * Đọc các đối tượng user từ file product.xml
-     *
-     * @return list student
-     */
     public List<Product> readProducts() {
         if (products == null){
             products = new ArrayList<>();
             ProductList pl = (ProductList) FileUtils.readXMLFile(XMLFILE_PATH, ProductList.class);
-            if (pl != null){
-                if (pl.getProducts() != null) {
-                    products = pl.getProducts();
-                }
+            if (pl != null &&  (pl.getProducts() != null)) {
+                products = pl.getProducts();
             }
         }
         return products;
@@ -66,19 +54,19 @@ public final class ProductDAO {
         writeProducts();
     }
     
-    public Product update(Product product, String id, String name, String category, int quantity, BigDecimal price,  Date expDate, String manafacturer, String thumbnail, String description){
+    public Product update(String id, Product product){
         Product temp = null;
         for (Product p: products){
-            if (p.getId().equals(product.getId())){
-                p.setId(id);
-                p.setName(name);
-                p.setCategory(category);
-                p.setQuantity(quantity);
-                p.setPrice(price);
-                p.setExpDate(expDate);
-                p.setManafacturer(manafacturer);
-                p.setThumbnail(thumbnail);
-                p.setDescription(description);
+            if (p.getId().equals(id)){
+                p.setId(product.getId());
+                p.setName(product.getName());
+                p.setCategory(product.getCategory());
+                p.setQuantity(product.getQuantity());
+                p.setPrice(product.getPrice());
+                p.setExpDate(product.getExpDate());
+                p.setManafacturer(product.getManafacturer());
+                p.setThumbnail(product.getThumbnail());
+                p.setDescription(product.getDescription());
                 temp = p;
                 writeProducts();
                 break;

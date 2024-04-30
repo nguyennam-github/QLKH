@@ -20,10 +20,11 @@ import javax.xml.bind.annotation.XmlRootElement;
 public class ProductList {
 
     private static ProductList instance;
+    
     @XmlElement(name = "product")
     private List<Product> products;
 
-    public static synchronized ProductList getInstance(){
+    public static ProductList getInstance(){
         if(instance == null){
             instance = new ProductList();
         }
