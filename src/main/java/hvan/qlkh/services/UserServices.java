@@ -30,11 +30,11 @@ public class UserServices {
         return instance;
     }
 
-    public User getCurrent() {
+    public User getCurrentUser() {
         return current;
     }
 
-    public void setCurrent(User current) {
+    public void setCurrentUser(User current) {
         UserServices.current = current;
     }
 

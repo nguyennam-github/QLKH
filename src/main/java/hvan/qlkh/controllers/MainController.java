@@ -47,14 +47,14 @@ public class MainController {
     
     public void initMain(){
         setComponetsMap();
-        if (UserServices.getInstance().getCurrent().getUsername().equals("admin")){
+        if (UserServices.getInstance().getCurrentUser().getUsername().equals("admin")){
             Navbar.getComponent(NavbarMap.get("Navbar__ButtonAuthorization")).setVisible(true);
         }
         else{
             Navbar.getComponent(NavbarMap.get("Navbar__ButtonAuthorization")).setVisible(false);
         }
 
-        if (!UserServices.getInstance().getCurrent().isWrite()) {
+        if (!UserServices.getInstance().getCurrentUser().isWrite()) {
             for (int i = 0; i < Toolbar.getComponentCount(); i++) {
                 if (Toolbar.getComponent(i).getClass().equals(TextField.class)){
                     ((TextField)Toolbar.getComponent(i)).setEditable(false);

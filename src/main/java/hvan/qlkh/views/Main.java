@@ -176,7 +176,7 @@ public class Main extends javax.swing.JPanel implements ListSelectionListener{
         Toolbar__ButtonResetSearch.setEnabled(state);
     }
 
-    private void initWarehouse(){
+    private void initProductTemplates(){
         Products__Main.removeAll();
         Products__Main.setLayout(new WrapLayout(WrapLayout.LEFT, 10, 10));
         Products__Scroll.setBorder(null);
@@ -351,7 +351,7 @@ public class Main extends javax.swing.JPanel implements ListSelectionListener{
         Statistic__ManafacturerStatistic.setText("<html><div style=\"width: 55px; text-align: center; color: red; font-size: 15px; font-family: Karla; font-weight: 500; line-height: 13px; word-wrap: break-word\">" + totalManafaturer +"</div></html>");
     }
 
-    private void initStatistic(){
+    private void setStatistic(){
         Statistic__QuantityStatistic.setSelectedIndex(0);
         Statistic__PercentStatistic.setSelectedIndex(0);
         initOveral();
@@ -445,7 +445,7 @@ public class Main extends javax.swing.JPanel implements ListSelectionListener{
         MainController.getInstance();
         MainController.setComponents(Toolbar, Navbar);
         initSearchField();
-        initWarehouse();
+        initProductTemplates();
         initSort();
         Statistic__Scroll.setCorner(JScrollPane.UPPER_RIGHT_CORNER, p);
         Statistic__Scroll.setBorder(new LineBorder(new Color(246,251,249), 1));
@@ -453,7 +453,7 @@ public class Main extends javax.swing.JPanel implements ListSelectionListener{
         Statistic__Scroll.getVerticalScrollBar().setBackground(Color.WHITE);
         Statistic__Scroll.getViewport().setBackground(Color.WHITE);
         Statistic__Scroll.setCorner(JScrollPane.UPPER_RIGHT_CORNER, p);
-        initStatistic();
+        setStatistic();
         this.appController = new HomeController(Home__Table);
         this.adminController = new HomeController(jPanel1);
         appController.setProductsTable(productsTable, ProductServices.getInstance().getProducts());
@@ -1944,7 +1944,7 @@ public class Main extends javax.swing.JPanel implements ListSelectionListener{
     }
 
     private void Toolbar__ButtonAddMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_Toolbar__ButtonAddMouseClicked
-        if (UserServices.getInstance().getCurrent().isWrite()){
+        if (UserServices.getInstance().getCurrentUser().isWrite()){
             if (Toolbar__ButtonAdd.isEnabled()){
                 if (!idCheck){
                     Toolbar__Alert.setText("<html><div style=\"text-align: center; width: 265px; color: red; font-size: 11px; font-family: Karla; font-weight: 400; line-height: 16px; word-wrap: break-word\">Mã số sản phảm này đã tồn tại!</div></html>");
@@ -2001,7 +2001,7 @@ public class Main extends javax.swing.JPanel implements ListSelectionListener{
                                             resetToolbar(true);
                                             productTemplates.add(new ProductTemplate(temp));
                                             Products__Main.add(productTemplates.getLast());
-                                            initStatistic();
+                                            setStatistic();
                                             showMessage("Thêm mới sản phẩm thành công!", true);
                                         }
                                     }
@@ -2019,7 +2019,7 @@ public class Main extends javax.swing.JPanel implements ListSelectionListener{
     }//GEN-LAST:event_Toolbar__ButtonAddMouseClicked
 
     private void Toolbar__NameInputCaretUpdate(javax.swing.event.CaretEvent evt) {//GEN-FIRST:event_Toolbar__NameInputCaretUpdate
-        if (UserServices.getInstance().getCurrent().isWrite()) {
+        if (UserServices.getInstance().getCurrentUser().isWrite()) {
             if (Toolbar__NameInput.getText().equals("")){
                 nameCheck = false;
                 Toolbar__Alert.setText("<html><div style=\"text-align: center; width: 265px; color: red; font-size: 11px; font-family: Karla; font-weight: 400; line-height: 16px; word-wrap: break-word\">Tên sản phẩm không được để trống!</div></html>"); 
@@ -2051,7 +2051,7 @@ public class Main extends javax.swing.JPanel implements ListSelectionListener{
     }//GEN-LAST:event_Toolbar__NameInputCaretUpdate
 
     private void Toolbar__QuantityInputCaretUpdate(javax.swing.event.CaretEvent evt) {//GEN-FIRST:event_Toolbar__QuantityInputCaretUpdate
-        if (UserServices.getInstance().getCurrent().isWrite()){
+        if (UserServices.getInstance().getCurrentUser().isWrite()){
             if (Toolbar__QuantityInput.getText().equals("")) {
                 quantityCheck = false;
                 Toolbar__Alert.setText("<html><div style=\"text-align: center; width: 265px; color: red; font-size: 11px; font-family: Karla; font-weight: 400; line-height: 16px; word-wrap: break-word\">Số lượng sản phẩm không được để trống!</div></html>");
@@ -2076,7 +2076,7 @@ public class Main extends javax.swing.JPanel implements ListSelectionListener{
     }//GEN-LAST:event_Toolbar__QuantityInputCaretUpdate
 
     private void Toolbar__PriceInputCaretUpdate(javax.swing.event.CaretEvent evt) {//GEN-FIRST:event_Toolbar__PriceInputCaretUpdate
-        if (UserServices.getInstance().getCurrent().isWrite()){
+        if (UserServices.getInstance().getCurrentUser().isWrite()){
             if (Toolbar__PriceInput.getText().equals("")) {
                 priceCheck = false;
                 Toolbar__Alert.setText("<html><div style=\"text-align: center; width: 265px; color: red; font-size: 11px; font-family: Karla; font-weight: 400; line-height: 16px; word-wrap: break-word\">Đơn giá sản phẩm không được để trống!</div></html>");
@@ -2112,7 +2112,7 @@ public class Main extends javax.swing.JPanel implements ListSelectionListener{
     }//GEN-LAST:event_Toolbar__ButtonFileChooserMouseClicked
 
     private void Toolbar__IDInputCaretUpdate(javax.swing.event.CaretEvent evt) {//GEN-FIRST:event_Toolbar__IDInputCaretUpdate
-        if (UserServices.getInstance().getCurrent().isWrite()){
+        if (UserServices.getInstance().getCurrentUser().isWrite()){
             if (Toolbar__IDInput.getText().equals("")) {
                 idCheck = false;
                 Toolbar__Alert.setText("<html><div style=\"text-align: center; width: 265px; color: red; font-size: 11px; font-family: Karla; font-weight: 400; line-height: 16px; word-wrap: break-word\">Mã số sản phẩm không được để trống!</div></html>");
@@ -2197,10 +2197,10 @@ public class Main extends javax.swing.JPanel implements ListSelectionListener{
                 appController.setProductsTable(productsTable, ProductServices.getInstance().getProducts());
                 resetWarehouse();
                 Products__Scroll.getVerticalScrollBar().setValue(0);
-                initStatistic();
+                setStatistic();
                 resetToolbar(true);
                 resetSearchField(true);
-                UserServices.getInstance().setCurrent(null);
+                UserServices.getInstance().setCurrentUser(null);
                 accessPage = PAGES_HOME;
                 this.repaint();
                 this.revalidate();
@@ -2212,7 +2212,7 @@ public class Main extends javax.swing.JPanel implements ListSelectionListener{
     }//GEN-LAST:event_Navbar__ButtonSignOutMouseClicked
 
     private void Toolbar__ManafacturerInputCaretUpdate(javax.swing.event.CaretEvent evt) {//GEN-FIRST:event_Toolbar__ManafacturerInputCaretUpdate
-        if (UserServices.getInstance().getCurrent().isWrite()){
+        if (UserServices.getInstance().getCurrentUser().isWrite()){
             if (Toolbar__ManafacturerInput.getText().equals("")){
                 manafacturerCheck = false;
                 Toolbar__Alert.setText("<html><div style=\"text-align: center; width: 265px; color: red; font-size: 11px; font-family: Karla; font-weight: 400; line-height: 16px; word-wrap: break-word\">Nhà sản xuất không được để trống!</div></html>");
@@ -2236,7 +2236,7 @@ public class Main extends javax.swing.JPanel implements ListSelectionListener{
     }//GEN-LAST:event_Toolbar__ButtonResetMouseClicked
 
     private void Toolbar__ButtonEditMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_Toolbar__ButtonEditMouseClicked
-        if (UserServices.getInstance().getCurrent().isWrite()){
+        if (UserServices.getInstance().getCurrentUser().isWrite()){
             if (Toolbar__ButtonEdit.isEnabled() && isModify()){
                 if (!idCheck){
                     Toolbar__Alert.setText("<html><div style=\"text-align: center; width: 265px; color: red; font-size: 11px; font-family: Karla; font-weight: 400; line-height: 16px; word-wrap: break-word\">Mã số sản phảm này đã tồn tại!</div></html>");
@@ -2283,7 +2283,7 @@ public class Main extends javax.swing.JPanel implements ListSelectionListener{
                                     else{
                                         if (idCheck&&nameCheck&&quantityCheck&&priceCheck&&dateCheck&&manafacturerCheck){
                                             JDialog.setDefaultLookAndFeelDecorated(true);
-                                            int response = JOptionPane.showConfirmDialog(null, "Bạn chắc chắn muốn xóa sản phẩm này?", "Cảnh báo",
+                                            int response = JOptionPane.showConfirmDialog(null, "Bạn chắc chắn muốn sửa thông tin sản phẩm này?", "Cảnh báo",
                                                 JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
                                             switch (response) {
                                                 case JOptionPane.NO_OPTION: break;
@@ -2305,7 +2305,7 @@ public class Main extends javax.swing.JPanel implements ListSelectionListener{
                                                         ProductTemplate temp = new ProductTemplate(product);
                                                         productTemplates.add(ProductServices.getInstance().getProducts().indexOf(product), temp);
                                                         Products__Main.add(temp, ProductServices.getInstance().getProducts().indexOf(product));
-                                                        initStatistic();
+                                                        setStatistic();
                                                         showMessage("Chỉnh sửa thông tin sản phẩm thành công!", true); 
                                                     } catch (NumberFormatException e) {
                                                     }
@@ -2329,7 +2329,7 @@ public class Main extends javax.swing.JPanel implements ListSelectionListener{
     }//GEN-LAST:event_Toolbar__ButtonEditMouseClicked
 
     private void Toolbar__ButtonDeleteMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_Toolbar__ButtonDeleteMouseClicked
-        if (UserServices.getInstance().getCurrent().isWrite()){
+        if (UserServices.getInstance().getCurrentUser().isWrite()){
             if (Toolbar__ButtonDelete.isEnabled()){
                 JDialog.setDefaultLookAndFeelDecorated(true);
                 int response = JOptionPane.showConfirmDialog(null, "Bạn chắc chắn muốn xóa sản phẩm này?", "Cảnh báo",
@@ -2345,7 +2345,7 @@ public class Main extends javax.swing.JPanel implements ListSelectionListener{
                         ProductServices.getInstance();
                         productsTable.clearSelection();
                         resetToolbar(true);
-                        initStatistic();
+                        setStatistic();
                         showMessage("Xóa sản phẩm thành công!", true);
                     }
                     case JOptionPane.CLOSED_OPTION: break;

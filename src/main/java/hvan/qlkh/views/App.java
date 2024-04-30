@@ -447,7 +447,7 @@ public class App extends javax.swing.JFrame {
             if (md5Hex.equals(user.getPassword())){
                 if (user.isRead()){
                     layout.show(App, "Main");
-                    UserServices.getInstance().setCurrent(user);
+                    UserServices.getInstance().setCurrentUser(user);
                     SignIn__UsernameInput.setText("");
                     SignIn__PasswordInput.setText("");
                     SignIn__Alert.setText("");
@@ -578,7 +578,7 @@ public class App extends javax.swing.JFrame {
                 if (md5Hex.equals(user.getPassword())){
                     if (user.isRead()){
                         layout.show(App, "Main");
-                        UserServices.getInstance().setCurrent(user);
+                        UserServices.getInstance().setCurrentUser(user);
                         SignIn__UsernameInput.setText("");
                         SignIn__PasswordInput.setText("");
                         SignIn__Alert.setText("");
@@ -610,7 +610,7 @@ public class App extends javax.swing.JFrame {
                 if (md5Hex.equals(user.getPassword())){
                     if (user.isRead()){
                         layout.show(App, "Main");
-                        UserServices.getInstance().setCurrent(user);
+                        UserServices.getInstance().setCurrentUser(user);
                         SignIn__UsernameInput.setText("");
                         SignIn__PasswordInput.setText("");
                         SignIn__Alert.setText("");
