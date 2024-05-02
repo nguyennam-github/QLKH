@@ -74,7 +74,7 @@ public final class Main extends javax.swing.JPanel implements ListSelectionListe
     private static final String ID_FORMAT = "^[a-zA-Z\\d]{1,9}$";
     private static final String DATE_FORMAT = "dd/MM/yyyy";
 
-    private static final String ID = "Mã số sản phẩm";
+    private static final String ID = "Mã số";
     private static final String NAME = "Tên sản phẩm";
     private static final String CATEGORY = "Danh mục";
     private static final String MANAFACTURER = "Nhà sản xuất";
@@ -89,8 +89,8 @@ public final class Main extends javax.swing.JPanel implements ListSelectionListe
 
     private static final String STATISTIC_HEADER = "<html><div style=\"width: 55px; text-align: center; color: red; font-size: 15px; font-family: Karla; font-weight: 500; line-height: 13px; word-wrap: break-word\">";
     private static final String STATISTIC_FOOTER = "</div></html>";
-    private static final String ID_FORMAT_ERROR_MESSAGE = "<html><div style=\"text-align: center; width: 265px; color: red; font-size: 11px; font-family: Karla; font-weight: 400; line-height: 16px; word-wrap: break-word\">Mã số sản phảm không hợp lệ!</div></html>";
-    private static final String ID_EXIST_ERROR_MESSAGE = "<html><div style=\"text-align: center; width: 265px; color: red; font-size: 11px; font-family: Karla; font-weight: 400; line-height: 16px; word-wrap: break-word\">Mã số sản phảm này đã tồn tại!</div></html>";
+    private static final String ID_FORMAT_ERROR_MESSAGE = "<html><div style=\"text-align: center; width: 265px; color: red; font-size: 11px; font-family: Karla; font-weight: 400; line-height: 16px; word-wrap: break-word\">Mã số sản phẩm không hợp lệ!</div></html>";
+    private static final String ID_EXIST_ERROR_MESSAGE = "<html><div style=\"text-align: center; width: 265px; color: red; font-size: 11px; font-family: Karla; font-weight: 400; line-height: 16px; word-wrap: break-word\">Mã số sản phẩm này đã tồn tại!</div></html>";
     private static final String NAME_EXIST_ERROR_MESSAGE = "<html><div style=\"text-align: center; width: 265px; color: red; font-size: 11px; font-family: Karla; font-weight: 400; line-height: 16px; word-wrap: break-word\">Sản phẩm này đã tồn tại!</div></html>";
     private static final String QUANTITY_FORMAT_ERROR_MESSAGE = "<html><div style=\"text-align: center; width: 265px; color: red; font-size: 11px; font-family: Karla; font-weight: 400; line-height: 16px; word-wrap: break-word\">Số lượng sản phẩm không hợp lệ!</div></html>";
     private static final String PRICE_FORMAT_ERROR_MESSAGE = "<html><div style=\"text-align: center; width: 265px; color: red; font-size: 11px; font-family: Karla; font-weight: 400; line-height: 16px; word-wrap: break-word\">Đơn giá sản phẩm không hợp lệ!</div></html>";
@@ -782,7 +782,7 @@ public final class Main extends javax.swing.JPanel implements ListSelectionListe
         toolbar__SortTitle.setPreferredSize(new java.awt.Dimension(340, 30));
 
         toolbar__SortInput.setFont(new java.awt.Font("Segoe UI", 0, 15)); // NOI18N
-        toolbar__SortInput.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Mặc định", "Mã số sản phẩm", "Tên sản phẩm", "Số lượng tăng", "Số lượng giảm", "Đơn giá tăng", "Đơn giá giảm", "Hạn sử dụng" }));
+        toolbar__SortInput.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Mặc định", "Mã số", "Tên sản phẩm", "Số lượng tăng", "Số lượng giảm", "Đơn giá tăng", "Đơn giá giảm", "Hạn sử dụng" }));
         toolbar__SortInput.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         toolbar__SortInput.setPreferredSize(new java.awt.Dimension(230, 35));
 
@@ -802,7 +802,7 @@ public final class Main extends javax.swing.JPanel implements ListSelectionListe
         toolbar__SearchTitle.setPreferredSize(new java.awt.Dimension(100, 35));
 
         toolbar__SearchInput.setFont(new java.awt.Font("Segoe UI", 0, 15)); // NOI18N
-        toolbar__SearchInput.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Mã số sản phẩm", "Tên sản phẩm", "Danh mục", "Đơn giá", "Hạn sử dụng", "Nhà sản xuất" }));
+        toolbar__SearchInput.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Mã số", "Tên sản phẩm", "Danh mục", "Đơn giá", "Hạn sử dụng", "Nhà sản xuất" }));
         toolbar__SearchInput.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         toolbar__SearchInput.setPreferredSize(new java.awt.Dimension(230, 35));
         toolbar__SearchInput.addItemListener(new java.awt.event.ItemListener() {
