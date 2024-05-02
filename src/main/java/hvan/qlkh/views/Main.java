@@ -2570,43 +2570,43 @@ public final class Main extends javax.swing.JPanel implements ListSelectionListe
     private void toolbar__ButtonSearchMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_toolbar__ButtonSearchMouseClicked
         if (toolbar__SearchInput.getSelectedItem().toString().equals(ID)){
             if (accessPage == PAGES_HOME){
-                appController.setProductsTable(productsTable, ProductServices.getInstance().filterById(toolbar__SearchStringInput.getText()));
+                appController.setProductsTable(productsTable, ProductServices.getInstance().filterById(toolbar__SearchStringInput.getText().trim()));
             }
             if (accessPage == PAGES_PRODUCTS){
-                filter(ProductServices.getInstance().filterById(toolbar__SearchStringInput.getText()));
+                filter(ProductServices.getInstance().filterById(toolbar__SearchStringInput.getText().trim()));
                 productSearchModify = true;
             }
         }
         if (toolbar__SearchInput.getSelectedItem().toString().equals(NAME)){
             if (accessPage == PAGES_HOME){
-                appController.setProductsTable(productsTable, ProductServices.getInstance().filterByName(toolbar__SearchStringInput.getText()));
+                appController.setProductsTable(productsTable, ProductServices.getInstance().filterByName(toolbar__SearchStringInput.getText().trim()));
             }
             if (accessPage == PAGES_PRODUCTS){
-                filter(ProductServices.getInstance().filterByName(toolbar__SearchStringInput.getText()));
+                filter(ProductServices.getInstance().filterByName(toolbar__SearchStringInput.getText().trim()));
                 productSearchModify = true;
             }
         }
         if (toolbar__SearchInput.getSelectedItem().toString().equals(CATEGORY)){
             if (accessPage == PAGES_HOME){
-                appController.setProductsTable(productsTable, ProductServices.getInstance().filterByCategory(toolbar__SearchStringInput.getText()));
+                appController.setProductsTable(productsTable, ProductServices.getInstance().filterByCategory(toolbar__SearchStringInput.getText().trim()));
             }
             if (accessPage == PAGES_PRODUCTS){
-                filter(ProductServices.getInstance().filterByCategory(toolbar__SearchStringInput.getText()));
+                filter(ProductServices.getInstance().filterByCategory(toolbar__SearchStringInput.getText().trim()));
                 productSearchModify = true;
             }
         }
         if (toolbar__SearchInput.getSelectedItem().toString().equals(MANAFACTURER)){
             if (accessPage == PAGES_HOME){
-                appController.setProductsTable(productsTable, ProductServices.getInstance().filterByManafacturer(toolbar__SearchStringInput.getText()));
+                appController.setProductsTable(productsTable, ProductServices.getInstance().filterByManafacturer(toolbar__SearchStringInput.getText().trim()));
             }
             if (accessPage == PAGES_PRODUCTS){
-                filter(ProductServices.getInstance().filterByManafacturer(toolbar__SearchStringInput.getText()));
+                filter(ProductServices.getInstance().filterByManafacturer(toolbar__SearchStringInput.getText().trim()));
                 productSearchModify = true;
             }
         }
         if (toolbar__SearchInput.getSelectedItem().toString().equals(PRICE)){
-            BigDecimal minPrice = new BigDecimal(toolbar__SearchMinInput.getText());
-            BigDecimal maxPrice = new BigDecimal(toolbar__SearchMaxInput.getText());
+            BigDecimal minPrice = new BigDecimal(toolbar__SearchMinInput.getText().trim());
+            BigDecimal maxPrice = new BigDecimal(toolbar__SearchMaxInput.getText().trim());
             if (accessPage == PAGES_HOME){
                 appController.setProductsTable(productsTable, ProductServices.getInstance().filterByPrice(minPrice, maxPrice));
             }
@@ -2617,8 +2617,8 @@ public final class Main extends javax.swing.JPanel implements ListSelectionListe
         }
         if (toolbar__SearchInput.getSelectedItem().toString().equals(EXPIRY)){
             try {
-                Date minDate = new SimpleDateFormat(DATE_FORMAT).parse(toolbar__SearchMinInput.getText());
-                Date maxDate = new SimpleDateFormat(DATE_FORMAT).parse(toolbar__SearchMaxInput.getText());
+                Date minDate = new SimpleDateFormat(DATE_FORMAT).parse(toolbar__SearchMinInput.getText().trim());
+                Date maxDate = new SimpleDateFormat(DATE_FORMAT).parse(toolbar__SearchMaxInput.getText().trim());
                 if (accessPage == PAGES_HOME){
                     appController.setProductsTable(productsTable, ProductServices.getInstance().filterByExpiry(minDate, maxDate));
                 }
@@ -2731,13 +2731,13 @@ public final class Main extends javax.swing.JPanel implements ListSelectionListe
     }//GEN-LAST:event_information__ButtonEditMouseClicked
 
     private void filter__ButtonFilterMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_filter__ButtonFilterMouseClicked
-        String username = filter__UsernameInput.getText();
+        String username = filter__UsernameInput.getText().trim();
         Date dateMin = null;
         Date dateMax = null;
         if (!filter__RegisterDateMin.getText().equals("") && !filter__RegisterDateMax.getText().equals("")){
             try {
-                dateMin = new SimpleDateFormat(DATE_FORMAT).parse(filter__RegisterDateMin.getText());
-                dateMax = new SimpleDateFormat(DATE_FORMAT).parse(filter__RegisterDateMax.getText());
+                dateMin = new SimpleDateFormat(DATE_FORMAT).parse(filter__RegisterDateMin.getText().trim());
+                dateMax = new SimpleDateFormat(DATE_FORMAT).parse(filter__RegisterDateMax.getText().trim());
             } catch (ParseException e) {
                 showMessage(CREATE_FORMAT_ERROR_DIALOG_MESSAGE, false);
             }
@@ -2801,43 +2801,43 @@ public final class Main extends javax.swing.JPanel implements ListSelectionListe
         if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
             if (toolbar__SearchInput.getSelectedItem().toString().equals(ID)){
                 if (accessPage == PAGES_HOME){
-                    appController.setProductsTable(productsTable, ProductServices.getInstance().filterById(toolbar__SearchStringInput.getText()));
+                    appController.setProductsTable(productsTable, ProductServices.getInstance().filterById(toolbar__SearchStringInput.getText().trim()));
                 }
                 if (accessPage == PAGES_PRODUCTS){
-                    filter(ProductServices.getInstance().filterById(toolbar__SearchStringInput.getText()));
+                    filter(ProductServices.getInstance().filterById(toolbar__SearchStringInput.getText().trim()));
                     productSearchModify = true;
                 }
             }
             if (toolbar__SearchInput.getSelectedItem().toString().equals(NAME)){
                 if (accessPage == PAGES_HOME){
-                    appController.setProductsTable(productsTable, ProductServices.getInstance().filterByName(toolbar__SearchStringInput.getText()));
+                    appController.setProductsTable(productsTable, ProductServices.getInstance().filterByName(toolbar__SearchStringInput.getText().trim()));
                 }
                 if (accessPage == PAGES_PRODUCTS){
-                    filter(ProductServices.getInstance().filterByName(toolbar__SearchStringInput.getText()));
+                    filter(ProductServices.getInstance().filterByName(toolbar__SearchStringInput.getText().trim()));
                     productSearchModify = true;
                 }
             }
             if (toolbar__SearchInput.getSelectedItem().toString().equals(CATEGORY)){
                 if (accessPage == PAGES_HOME){
-                    appController.setProductsTable(productsTable, ProductServices.getInstance().filterByCategory(toolbar__SearchStringInput.getText()));
+                    appController.setProductsTable(productsTable, ProductServices.getInstance().filterByCategory(toolbar__SearchStringInput.getText().trim()));
                 }
                 if (accessPage == PAGES_PRODUCTS){
-                    filter(ProductServices.getInstance().filterByCategory(toolbar__SearchStringInput.getText()));
+                    filter(ProductServices.getInstance().filterByCategory(toolbar__SearchStringInput.getText().trim()));
                     productSearchModify = true;
                 }
             }
             if (toolbar__SearchInput.getSelectedItem().toString().equals(MANAFACTURER)){
                 if (accessPage == PAGES_HOME){
-                    appController.setProductsTable(productsTable, ProductServices.getInstance().filterByManafacturer(toolbar__SearchStringInput.getText()));
+                    appController.setProductsTable(productsTable, ProductServices.getInstance().filterByManafacturer(toolbar__SearchStringInput.getText().trim()));
                 }
                 if (accessPage == PAGES_PRODUCTS){
-                    filter(ProductServices.getInstance().filterByManafacturer(toolbar__SearchStringInput.getText()));
+                    filter(ProductServices.getInstance().filterByManafacturer(toolbar__SearchStringInput.getText().trim()));
                     productSearchModify = true;
                 }
             }
             if (toolbar__SearchInput.getSelectedItem().toString().equals(PRICE)){
-                BigDecimal minPrice = new BigDecimal(toolbar__SearchMinInput.getText());
-                BigDecimal maxPrice = new BigDecimal(toolbar__SearchMaxInput.getText());
+                BigDecimal minPrice = new BigDecimal(toolbar__SearchMinInput.getText().trim());
+                BigDecimal maxPrice = new BigDecimal(toolbar__SearchMaxInput.getText().trim());
                 if (accessPage == PAGES_HOME){
                     appController.setProductsTable(productsTable, ProductServices.getInstance().filterByPrice(minPrice, maxPrice));
                 }
@@ -2848,8 +2848,8 @@ public final class Main extends javax.swing.JPanel implements ListSelectionListe
             }
             if (toolbar__SearchInput.getSelectedItem().toString().equals(EXPIRY)){
                 try {
-                    Date minDate = new SimpleDateFormat(DATE_FORMAT).parse(toolbar__SearchMinInput.getText());
-                    Date maxDate = new SimpleDateFormat(DATE_FORMAT).parse(toolbar__SearchMaxInput.getText());
+                    Date minDate = new SimpleDateFormat(DATE_FORMAT).parse(toolbar__SearchMinInput.getText().trim());
+                    Date maxDate = new SimpleDateFormat(DATE_FORMAT).parse(toolbar__SearchMaxInput.getText().trim());
                     if (accessPage == PAGES_HOME){
                         appController.setProductsTable(productsTable, ProductServices.getInstance().filterByExpiry(minDate, maxDate));
                     }
@@ -2874,43 +2874,43 @@ public final class Main extends javax.swing.JPanel implements ListSelectionListe
         if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
             if (toolbar__SearchInput.getSelectedItem().toString().equals(ID)){
                 if (accessPage == PAGES_HOME){
-                    appController.setProductsTable(productsTable, ProductServices.getInstance().filterById(toolbar__SearchStringInput.getText()));
+                    appController.setProductsTable(productsTable, ProductServices.getInstance().filterById(toolbar__SearchStringInput.getText().trim()));
                 }
                 if (accessPage == PAGES_PRODUCTS){
-                    filter(ProductServices.getInstance().filterById(toolbar__SearchStringInput.getText()));
+                    filter(ProductServices.getInstance().filterById(toolbar__SearchStringInput.getText().trim()));
                     productSearchModify = true;
                 }
             }
             if (toolbar__SearchInput.getSelectedItem().toString().equals(NAME)){
                 if (accessPage == PAGES_HOME){
-                    appController.setProductsTable(productsTable, ProductServices.getInstance().filterByName(toolbar__SearchStringInput.getText()));
+                    appController.setProductsTable(productsTable, ProductServices.getInstance().filterByName(toolbar__SearchStringInput.getText().trim()));
                 }
                 if (accessPage == PAGES_PRODUCTS){
-                    filter(ProductServices.getInstance().filterByName(toolbar__SearchStringInput.getText()));
+                    filter(ProductServices.getInstance().filterByName(toolbar__SearchStringInput.getText().trim()));
                     productSearchModify = true;
                 }
             }
             if (toolbar__SearchInput.getSelectedItem().toString().equals(CATEGORY)){
                 if (accessPage == PAGES_HOME){
-                    appController.setProductsTable(productsTable, ProductServices.getInstance().filterByCategory(toolbar__SearchStringInput.getText()));
+                    appController.setProductsTable(productsTable, ProductServices.getInstance().filterByCategory(toolbar__SearchStringInput.getText().trim()));
                 }
                 if (accessPage == PAGES_PRODUCTS){
-                    filter(ProductServices.getInstance().filterByCategory(toolbar__SearchStringInput.getText()));
+                    filter(ProductServices.getInstance().filterByCategory(toolbar__SearchStringInput.getText().trim()));
                     productSearchModify = true;
                 }
             }
             if (toolbar__SearchInput.getSelectedItem().toString().equals(MANAFACTURER)){
                 if (accessPage == PAGES_HOME){
-                    appController.setProductsTable(productsTable, ProductServices.getInstance().filterByManafacturer(toolbar__SearchStringInput.getText()));
+                    appController.setProductsTable(productsTable, ProductServices.getInstance().filterByManafacturer(toolbar__SearchStringInput.getText().trim()));
                 }
                 if (accessPage == PAGES_PRODUCTS){
-                    filter(ProductServices.getInstance().filterByManafacturer(toolbar__SearchStringInput.getText()));
+                    filter(ProductServices.getInstance().filterByManafacturer(toolbar__SearchStringInput.getText().trim()));
                     productSearchModify = true;
                 }
             }
             if (toolbar__SearchInput.getSelectedItem().toString().equals(PRICE)){
-                BigDecimal minPrice = new BigDecimal(toolbar__SearchMinInput.getText());
-                BigDecimal maxPrice = new BigDecimal(toolbar__SearchMaxInput.getText());
+                BigDecimal minPrice = new BigDecimal(toolbar__SearchMinInput.getText().trim());
+                BigDecimal maxPrice = new BigDecimal(toolbar__SearchMaxInput.getText().trim());
                 if (accessPage == PAGES_HOME){
                     appController.setProductsTable(productsTable, ProductServices.getInstance().filterByPrice(minPrice, maxPrice));
                 }
@@ -2921,8 +2921,8 @@ public final class Main extends javax.swing.JPanel implements ListSelectionListe
             }
             if (toolbar__SearchInput.getSelectedItem().toString().equals(EXPIRY)){
                 try {
-                    Date minDate = new SimpleDateFormat(DATE_FORMAT).parse(toolbar__SearchMinInput.getText());
-                    Date maxDate = new SimpleDateFormat(DATE_FORMAT).parse(toolbar__SearchMaxInput.getText());
+                    Date minDate = new SimpleDateFormat(DATE_FORMAT).parse(toolbar__SearchMinInput.getText().trim());
+                    Date maxDate = new SimpleDateFormat(DATE_FORMAT).parse(toolbar__SearchMaxInput.getText().trim());
                     if (accessPage == PAGES_HOME){
                         appController.setProductsTable(productsTable, ProductServices.getInstance().filterByExpiry(minDate, maxDate));
                     }
@@ -2947,43 +2947,43 @@ public final class Main extends javax.swing.JPanel implements ListSelectionListe
         if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
             if (toolbar__SearchInput.getSelectedItem().toString().equals(ID)){
                 if (accessPage == PAGES_HOME){
-                    appController.setProductsTable(productsTable, ProductServices.getInstance().filterById(toolbar__SearchStringInput.getText()));
+                    appController.setProductsTable(productsTable, ProductServices.getInstance().filterById(toolbar__SearchStringInput.getText().trim()));
                 }
                 if (accessPage == PAGES_PRODUCTS){
-                    filter(ProductServices.getInstance().filterById(toolbar__SearchStringInput.getText()));
+                    filter(ProductServices.getInstance().filterById(toolbar__SearchStringInput.getText().trim()));
                     productSearchModify = true;
                 }
             }
             if (toolbar__SearchInput.getSelectedItem().toString().equals(NAME)){
                 if (accessPage == PAGES_HOME){
-                    appController.setProductsTable(productsTable, ProductServices.getInstance().filterByName(toolbar__SearchStringInput.getText()));
+                    appController.setProductsTable(productsTable, ProductServices.getInstance().filterByName(toolbar__SearchStringInput.getText().trim()));
                 }
                 if (accessPage == PAGES_PRODUCTS){
-                    filter(ProductServices.getInstance().filterByName(toolbar__SearchStringInput.getText()));
+                    filter(ProductServices.getInstance().filterByName(toolbar__SearchStringInput.getText().trim()));
                     productSearchModify = true;
                 }
             }
             if (toolbar__SearchInput.getSelectedItem().toString().equals(CATEGORY)){
                 if (accessPage == PAGES_HOME){
-                    appController.setProductsTable(productsTable, ProductServices.getInstance().filterByCategory(toolbar__SearchStringInput.getText()));
+                    appController.setProductsTable(productsTable, ProductServices.getInstance().filterByCategory(toolbar__SearchStringInput.getText().trim()));
                 }
                 if (accessPage == PAGES_PRODUCTS){
-                    filter(ProductServices.getInstance().filterByCategory(toolbar__SearchStringInput.getText()));
+                    filter(ProductServices.getInstance().filterByCategory(toolbar__SearchStringInput.getText().trim()));
                     productSearchModify = true;
                 }
             }
             if (toolbar__SearchInput.getSelectedItem().toString().equals(MANAFACTURER)){
                 if (accessPage == PAGES_HOME){
-                    appController.setProductsTable(productsTable, ProductServices.getInstance().filterByManafacturer(toolbar__SearchStringInput.getText()));
+                    appController.setProductsTable(productsTable, ProductServices.getInstance().filterByManafacturer(toolbar__SearchStringInput.getText().trim()));
                 }
                 if (accessPage == PAGES_PRODUCTS){
-                    filter(ProductServices.getInstance().filterByManafacturer(toolbar__SearchStringInput.getText()));
+                    filter(ProductServices.getInstance().filterByManafacturer(toolbar__SearchStringInput.getText().trim()));
                     productSearchModify = true;
                 }
             }
             if (toolbar__SearchInput.getSelectedItem().toString().equals(PRICE)){
-                BigDecimal minPrice = new BigDecimal(toolbar__SearchMinInput.getText());
-                BigDecimal maxPrice = new BigDecimal(toolbar__SearchMaxInput.getText());
+                BigDecimal minPrice = new BigDecimal(toolbar__SearchMinInput.getText().trim());
+                BigDecimal maxPrice = new BigDecimal(toolbar__SearchMaxInput.getText().trim());
                 if (accessPage == PAGES_HOME){
                     appController.setProductsTable(productsTable, ProductServices.getInstance().filterByPrice(minPrice, maxPrice));
                 }
@@ -2994,8 +2994,8 @@ public final class Main extends javax.swing.JPanel implements ListSelectionListe
             }
             if (toolbar__SearchInput.getSelectedItem().toString().equals(EXPIRY)){
                 try {
-                    Date minDate = new SimpleDateFormat(DATE_FORMAT).parse(toolbar__SearchMinInput.getText());
-                    Date maxDate = new SimpleDateFormat(DATE_FORMAT).parse(toolbar__SearchMaxInput.getText());
+                    Date minDate = new SimpleDateFormat(DATE_FORMAT).parse(toolbar__SearchMinInput.getText().trim());
+                    Date maxDate = new SimpleDateFormat(DATE_FORMAT).parse(toolbar__SearchMaxInput.getText().trim());
                     if (accessPage == PAGES_HOME){
                         appController.setProductsTable(productsTable, ProductServices.getInstance().filterByExpiry(minDate, maxDate));
                     }
@@ -3018,13 +3018,13 @@ public final class Main extends javax.swing.JPanel implements ListSelectionListe
 
     private void filter__UsernameInputKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_filter__UsernameInputKeyPressed
         if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
-            String username = filter__UsernameInput.getText();
+            String username = filter__UsernameInput.getText().trim();
             Date dateMin = null;
             Date dateMax = null;
             if (!filter__RegisterDateMin.getText().equals("") && !filter__RegisterDateMax.getText().equals("")){
                 try {
-                    dateMin = new SimpleDateFormat(DATE_FORMAT).parse(filter__RegisterDateMin.getText());
-                    dateMax = new SimpleDateFormat(DATE_FORMAT).parse(filter__RegisterDateMax.getText());
+                    dateMin = new SimpleDateFormat(DATE_FORMAT).parse(filter__RegisterDateMin.getText().trim());
+                    dateMax = new SimpleDateFormat(DATE_FORMAT).parse(filter__RegisterDateMax.getText().trim());
                 } catch (ParseException e) {
                     showMessage(CREATE_FORMAT_ERROR_DIALOG_MESSAGE, false);
                 }
@@ -3036,13 +3036,13 @@ public final class Main extends javax.swing.JPanel implements ListSelectionListe
 
     private void filter__RegisterDateMinKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_filter__RegisterDateMinKeyPressed
         if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
-            String username = filter__UsernameInput.getText();
+            String username = filter__UsernameInput.getText().trim();
             Date dateMin = null;
             Date dateMax = null;
             if (!filter__RegisterDateMin.getText().equals("") && !filter__RegisterDateMax.getText().equals("")){
                 try {
-                    dateMin = new SimpleDateFormat(DATE_FORMAT).parse(filter__RegisterDateMin.getText());
-                    dateMax = new SimpleDateFormat(DATE_FORMAT).parse(filter__RegisterDateMax.getText());
+                    dateMin = new SimpleDateFormat(DATE_FORMAT).parse(filter__RegisterDateMin.getText().trim());
+                    dateMax = new SimpleDateFormat(DATE_FORMAT).parse(filter__RegisterDateMax.getText().trim());
                 } catch (ParseException e) {
                     showMessage(CREATE_FORMAT_ERROR_DIALOG_MESSAGE, false);
                 }
@@ -3054,13 +3054,13 @@ public final class Main extends javax.swing.JPanel implements ListSelectionListe
 
     private void filter__RegisterDateMaxKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_filter__RegisterDateMaxKeyPressed
         if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
-            String username = filter__UsernameInput.getText();
+            String username = filter__UsernameInput.getText().trim();
             Date dateMin = null;
             Date dateMax = null;
             if (!filter__RegisterDateMin.getText().equals("") && !filter__RegisterDateMax.getText().equals("")){
                 try {
-                    dateMin = new SimpleDateFormat(DATE_FORMAT).parse(filter__RegisterDateMin.getText());
-                    dateMax = new SimpleDateFormat(DATE_FORMAT).parse(filter__RegisterDateMax.getText());
+                    dateMin = new SimpleDateFormat(DATE_FORMAT).parse(filter__RegisterDateMin.getText().trim());
+                    dateMax = new SimpleDateFormat(DATE_FORMAT).parse(filter__RegisterDateMax.getText().trim());
                 } catch (ParseException e) {
                     showMessage(CREATE_FORMAT_ERROR_DIALOG_MESSAGE, false);
                 }
@@ -3072,13 +3072,13 @@ public final class Main extends javax.swing.JPanel implements ListSelectionListe
 
     private void filter__ReadInputKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_filter__ReadInputKeyPressed
         if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
-            String username = filter__UsernameInput.getText();
+            String username = filter__UsernameInput.getText().trim();
             Date dateMin = null;
             Date dateMax = null;
             if (!filter__RegisterDateMin.getText().equals("") && !filter__RegisterDateMax.getText().equals("")){
                 try {
-                    dateMin = new SimpleDateFormat(DATE_FORMAT).parse(filter__RegisterDateMin.getText());
-                    dateMax = new SimpleDateFormat(DATE_FORMAT).parse(filter__RegisterDateMax.getText());
+                    dateMin = new SimpleDateFormat(DATE_FORMAT).parse(filter__RegisterDateMin.getText().trim());
+                    dateMax = new SimpleDateFormat(DATE_FORMAT).parse(filter__RegisterDateMax.getText().trim());
                 } catch (ParseException e) {
                     showMessage(CREATE_FORMAT_ERROR_DIALOG_MESSAGE, false);
                 }
@@ -3090,13 +3090,13 @@ public final class Main extends javax.swing.JPanel implements ListSelectionListe
 
     private void filter__WriteInputKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_filter__WriteInputKeyPressed
         if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
-            String username = filter__UsernameInput.getText();
+            String username = filter__UsernameInput.getText().trim();
             Date dateMin = null;
             Date dateMax = null;
             if (!filter__RegisterDateMin.getText().equals("") && !filter__RegisterDateMax.getText().equals("")){
                 try {
-                    dateMin = new SimpleDateFormat(DATE_FORMAT).parse(filter__RegisterDateMin.getText());
-                    dateMax = new SimpleDateFormat(DATE_FORMAT).parse(filter__RegisterDateMax.getText());
+                    dateMin = new SimpleDateFormat(DATE_FORMAT).parse(filter__RegisterDateMin.getText().trim());
+                    dateMax = new SimpleDateFormat(DATE_FORMAT).parse(filter__RegisterDateMax.getText().trim());
                 } catch (ParseException e) {
                     showMessage(CREATE_FORMAT_ERROR_DIALOG_MESSAGE, false);
                 }

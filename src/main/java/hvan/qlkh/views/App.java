@@ -611,23 +611,35 @@ public class App extends javax.swing.JFrame {
 
     private void signUp__UsernameInputKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_signUp__UsernameInputKeyPressed
         if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
-            if(usernameCheck){
-                signUp__Alert.setText("<html><div style=\"text-align: center; width: 354px; color: red; font-size: 12px; font-family: Karla; font-weight: 400; line-height: 16px; word-wrap: break-word\">Tên tài khoản dài từ 5 - 15 ký tự và không chứa ký tự đặc biệt!</div></html>");
+            if (!signUp__UsernameInput.getText().equals("")&&
+                !signUp__PasswordInput.getText().equals("")&&
+                !signUp__RetypeInput.getText().equals("")){
+                if(usernameCheck == passwordCheck == retypeCheck == true){
+                    signUp__Alert.setText("<html><div style=\"text-align: center; width: 354px; color: red; font-size: 12px; font-family: Karla; font-weight: 400; line-height: 16px; word-wrap: break-word\"></div></html>");
+                    User temp = new User(signUp__UsernameInput.getText(), signUp__PasswordInput.getText());
+                    UserDAO.getInstance().create(temp);
+                    layout.show(app, "app__SignIn");
+                    resetSignUp();
+                }
             }
             else{
-                if (passwordCheck){
-                    signUp__Alert.setText("<html><div style=\"text-align: center; width: 354px; color: red; font-size: 12px; font-family: Karla; font-weight: 400; line-height: 16px; word-wrap: break-word\">Mật khẩu dài hơn 8 ký tự và chứa ký tự số, chữ cái!</div></html>");
+                if (signUp__UsernameInput.getText().equals("")){
+                    if (usernameCheck == passwordCheck == retypeCheck == true) {
+                        signUp__Alert.setText("<html><div style=\"text-align: center; width: 354px; color: red; font-size: 12px; font-family: Karla; font-weight: 400; line-height: 16px; word-wrap: break-word\">Tên tài khoản không được để trống!</div></html>");
+                    }
                 }
                 else{
-                    if(retypeCheck){
-                        signUp__Alert.setText("<html><div style=\"text-align: center; width: 354px; color: red; font-size: 12px; font-family: Karla; font-weight: 400; line-height: 16px; word-wrap: break-word\">Mật khẩu và nhập lại mật khẩu không khớp!</div></html>");
+                    if (signUp__PasswordInput.getText().equals("")){
+                        if (usernameCheck == passwordCheck == retypeCheck == true){
+                            signUp__Alert.setText("<html><div style=\"text-align: center; width: 354px; color: red; font-size: 12px; font-family: Karla; font-weight: 400; line-height: 16px; word-wrap: break-word\">Mật khẩu không được để trống!</div></html>");
+                        }
                     }
                     else{
-                        signUp__Alert.setText("<html><div style=\"text-align: center; width: 354px; color: red; font-size: 12px; font-family: Karla; font-weight: 400; line-height: 16px; word-wrap: break-word\"></div></html>");
-                        User temp = new User(signUp__UsernameInput.getText(), signUp__PasswordInput.getText());
-                        UserDAO.getInstance().create(temp);
-                        layout.show(app, "app__SignIn");
-                        resetSignUp();
+                        if (signUp__RetypeInput.getText().equals("")){
+                            if (usernameCheck == passwordCheck == retypeCheck == true){
+                                signUp__Alert.setText("<html><div style=\"text-align: center; width: 354px; color: red; font-size: 12px; font-family: Karla; font-weight: 400; line-height: 16px; word-wrap: break-word\">Mật khẩu và nhập lại mật khẩu không khớp!</div></html>");
+                            }
+                        }
                     }
                 }
             }
@@ -636,23 +648,35 @@ public class App extends javax.swing.JFrame {
 
     private void signUp__PasswordInputKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_signUp__PasswordInputKeyPressed
         if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
-            if(usernameCheck){
-                signUp__Alert.setText("<html><div style=\"text-align: center; width: 354px; color: red; font-size: 12px; font-family: Karla; font-weight: 400; line-height: 16px; word-wrap: break-word\">Tên tài khoản dài từ 5 - 15 ký tự và không chứa ký tự đặc biệt!</div></html>");
+            if (!signUp__UsernameInput.getText().equals("")&&
+                !signUp__PasswordInput.getText().equals("")&&
+                !signUp__RetypeInput.getText().equals("")){
+                if(usernameCheck == passwordCheck == retypeCheck == true){
+                    signUp__Alert.setText("<html><div style=\"text-align: center; width: 354px; color: red; font-size: 12px; font-family: Karla; font-weight: 400; line-height: 16px; word-wrap: break-word\"></div></html>");
+                    User temp = new User(signUp__UsernameInput.getText(), signUp__PasswordInput.getText());
+                    UserDAO.getInstance().create(temp);
+                    layout.show(app, "app__SignIn");
+                    resetSignUp();
+                }
             }
             else{
-                if (passwordCheck){
-                    signUp__Alert.setText("<html><div style=\"text-align: center; width: 354px; color: red; font-size: 12px; font-family: Karla; font-weight: 400; line-height: 16px; word-wrap: break-word\">Mật khẩu dài hơn 8 ký tự và chứa ký tự số, chữ cái!</div></html>");
+                if (signUp__UsernameInput.getText().equals("")){
+                    if (usernameCheck == passwordCheck == retypeCheck == true) {
+                        signUp__Alert.setText("<html><div style=\"text-align: center; width: 354px; color: red; font-size: 12px; font-family: Karla; font-weight: 400; line-height: 16px; word-wrap: break-word\">Tên tài khoản không được để trống!</div></html>");
+                    }
                 }
                 else{
-                    if(retypeCheck){
-                        signUp__Alert.setText("<html><div style=\"text-align: center; width: 354px; color: red; font-size: 12px; font-family: Karla; font-weight: 400; line-height: 16px; word-wrap: break-word\">Mật khẩu và nhập lại mật khẩu không khớp!</div></html>");
+                    if (signUp__PasswordInput.getText().equals("")){
+                        if (usernameCheck == passwordCheck == retypeCheck == true){
+                            signUp__Alert.setText("<html><div style=\"text-align: center; width: 354px; color: red; font-size: 12px; font-family: Karla; font-weight: 400; line-height: 16px; word-wrap: break-word\">Mật khẩu không được để trống!</div></html>");
+                        }
                     }
                     else{
-                        signUp__Alert.setText("<html><div style=\"text-align: center; width: 354px; color: red; font-size: 12px; font-family: Karla; font-weight: 400; line-height: 16px; word-wrap: break-word\"></div></html>");
-                        User temp = new User(signUp__UsernameInput.getText(), signUp__PasswordInput.getText());
-                        UserDAO.getInstance().create(temp);
-                        layout.show(app, "app__SignIn");
-                        resetSignUp();
+                        if (signUp__RetypeInput.getText().equals("")){
+                            if (usernameCheck == passwordCheck == retypeCheck == true){
+                                signUp__Alert.setText("<html><div style=\"text-align: center; width: 354px; color: red; font-size: 12px; font-family: Karla; font-weight: 400; line-height: 16px; word-wrap: break-word\">Mật khẩu và nhập lại mật khẩu không khớp!</div></html>");
+                            }
+                        }
                     }
                 }
             }
@@ -661,23 +685,35 @@ public class App extends javax.swing.JFrame {
 
     private void signUp__RetypeInputKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_signUp__RetypeInputKeyPressed
         if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
-            if(usernameCheck){
-                signUp__Alert.setText("<html><div style=\"text-align: center; width: 354px; color: red; font-size: 12px; font-family: Karla; font-weight: 400; line-height: 16px; word-wrap: break-word\">Tên tài khoản dài từ 5 - 15 ký tự và không chứa ký tự đặc biệt!</div></html>");
+            if (!signUp__UsernameInput.getText().equals("")&&
+                !signUp__PasswordInput.getText().equals("")&&
+                !signUp__RetypeInput.getText().equals("")){
+                if(usernameCheck == passwordCheck == retypeCheck == true){
+                    signUp__Alert.setText("<html><div style=\"text-align: center; width: 354px; color: red; font-size: 12px; font-family: Karla; font-weight: 400; line-height: 16px; word-wrap: break-word\"></div></html>");
+                    User temp = new User(signUp__UsernameInput.getText(), signUp__PasswordInput.getText());
+                    UserDAO.getInstance().create(temp);
+                    layout.show(app, "app__SignIn");
+                    resetSignUp();
+                }
             }
             else{
-                if (passwordCheck){
-                    signUp__Alert.setText("<html><div style=\"text-align: center; width: 354px; color: red; font-size: 12px; font-family: Karla; font-weight: 400; line-height: 16px; word-wrap: break-word\">Mật khẩu dài hơn 8 ký tự và chứa ký tự số, chữ cái!</div></html>");
+                if (signUp__UsernameInput.getText().equals("")){
+                    if (usernameCheck == passwordCheck == retypeCheck == true) {
+                        signUp__Alert.setText("<html><div style=\"text-align: center; width: 354px; color: red; font-size: 12px; font-family: Karla; font-weight: 400; line-height: 16px; word-wrap: break-word\">Tên tài khoản không được để trống!</div></html>");
+                    }
                 }
                 else{
-                    if(retypeCheck){
-                        signUp__Alert.setText("<html><div style=\"text-align: center; width: 354px; color: red; font-size: 12px; font-family: Karla; font-weight: 400; line-height: 16px; word-wrap: break-word\">Mật khẩu và nhập lại mật khẩu không khớp!</div></html>");
+                    if (signUp__PasswordInput.getText().equals("")){
+                        if (usernameCheck == passwordCheck == retypeCheck == true){
+                            signUp__Alert.setText("<html><div style=\"text-align: center; width: 354px; color: red; font-size: 12px; font-family: Karla; font-weight: 400; line-height: 16px; word-wrap: break-word\">Mật khẩu không được để trống!</div></html>");
+                        }
                     }
                     else{
-                        signUp__Alert.setText("<html><div style=\"text-align: center; width: 354px; color: red; font-size: 12px; font-family: Karla; font-weight: 400; line-height: 16px; word-wrap: break-word\"></div></html>");
-                        User temp = new User(signUp__UsernameInput.getText(), signUp__PasswordInput.getText());
-                        UserDAO.getInstance().create(temp);
-                        layout.show(app, "app__SignIn");
-                        resetSignUp();
+                        if (signUp__RetypeInput.getText().equals("")){
+                            if (usernameCheck == passwordCheck == retypeCheck == true){
+                                signUp__Alert.setText("<html><div style=\"text-align: center; width: 354px; color: red; font-size: 12px; font-family: Karla; font-weight: 400; line-height: 16px; word-wrap: break-word\">Mật khẩu và nhập lại mật khẩu không khớp!</div></html>");
+                            }
+                        }
                     }
                 }
             }
