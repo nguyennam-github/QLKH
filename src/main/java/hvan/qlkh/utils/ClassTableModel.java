@@ -4,10 +4,6 @@
  */
 package hvan.qlkh.utils;
 
-/**
- *
- * @author PC
- */
 import hvan.qlkh.models.Product;
 import hvan.qlkh.models.User;
 import java.text.NumberFormat;
@@ -15,6 +11,11 @@ import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Locale;
 import javax.swing.table.DefaultTableModel;
+
+/**
+ *
+ * @author Nguyễn Phan Hoài Nam
+ */
 
 public class ClassTableModel {
 
@@ -31,7 +32,7 @@ public class ClassTableModel {
             obj[i][1] = product.getName();
             obj[i][2] = product.getCategory();
             obj[i][3] = product.getQuantity();
-            obj[i][4] = currencyFormat.format(product.getPrice());
+            obj[i][4] = currencyFormat.format(product.getPrice()).trim();
             String date = new SimpleDateFormat("dd/MM/yyyy").format(product.getExpDate());
             obj[i][5] = date;
             obj[i][6] = product.getManafacturer();

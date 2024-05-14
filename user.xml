@@ -140,4 +140,11 @@
         <read>true</read>
         <write>false</write>
     </user>
+    <user>
+        <username>demoApp</username>
+        <password>6e9bece1914809fb8493146417e722f6</password>
+        <register>2024-05-04T20:22:41.555+07:00</register>
+        <read>true</read>
+        <write>false</write>
+    </user>
 </users>

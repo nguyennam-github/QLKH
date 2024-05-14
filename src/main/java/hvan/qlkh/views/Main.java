@@ -30,6 +30,9 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -71,10 +74,9 @@ public final class Main extends javax.swing.JPanel implements ListSelectionListe
 
     private static final String IMAGES_DIR = "images/";
 
-    private static final String ID_FORMAT = "^[a-zA-Z\\d]{1,9}$";
     private static final String DATE_FORMAT = "dd/MM/yyyy";
 
-    private static final String ID = "Mã số";
+    private static final String ID = "Mã số sản phẩm";
     private static final String NAME = "Tên sản phẩm";
     private static final String CATEGORY = "Danh mục";
     private static final String MANAFACTURER = "Nhà sản xuất";
@@ -89,12 +91,9 @@ public final class Main extends javax.swing.JPanel implements ListSelectionListe
 
     private static final String STATISTIC_HEADER = "<html><div style=\"width: 55px; text-align: center; color: red; font-size: 15px; font-family: Karla; font-weight: 500; line-height: 13px; word-wrap: break-word\">";
     private static final String STATISTIC_FOOTER = "</div></html>";
-    private static final String ID_FORMAT_ERROR_MESSAGE = "<html><div style=\"text-align: center; width: 265px; color: red; font-size: 11px; font-family: Karla; font-weight: 400; line-height: 16px; word-wrap: break-word\">Mã số sản phẩm không hợp lệ!</div></html>";
-    private static final String ID_EXIST_ERROR_MESSAGE = "<html><div style=\"text-align: center; width: 265px; color: red; font-size: 11px; font-family: Karla; font-weight: 400; line-height: 16px; word-wrap: break-word\">Mã số sản phẩm này đã tồn tại!</div></html>";
     private static final String NAME_EXIST_ERROR_MESSAGE = "<html><div style=\"text-align: center; width: 265px; color: red; font-size: 11px; font-family: Karla; font-weight: 400; line-height: 16px; word-wrap: break-word\">Sản phẩm này đã tồn tại!</div></html>";
     private static final String QUANTITY_FORMAT_ERROR_MESSAGE = "<html><div style=\"text-align: center; width: 265px; color: red; font-size: 11px; font-family: Karla; font-weight: 400; line-height: 16px; word-wrap: break-word\">Số lượng sản phẩm không hợp lệ!</div></html>";
     private static final String PRICE_FORMAT_ERROR_MESSAGE = "<html><div style=\"text-align: center; width: 265px; color: red; font-size: 11px; font-family: Karla; font-weight: 400; line-height: 16px; word-wrap: break-word\">Đơn giá sản phẩm không hợp lệ!</div></html>";
-    private static final String ID_BLANK_ERROR_MESSAGE = "<html><div style=\"text-align: center; width: 265px; color: red; font-size: 11px; font-family: Karla; font-weight: 400; line-height: 16px; word-wrap: break-word\">Mã số sản phẩm không được để trống!</div></html>";
     private static final String NAME_BLANK_ERROR_MESSAGE = "<html><div style=\"text-align: center; width: 265px; color: red; font-size: 11px; font-family: Karla; font-weight: 400; line-height: 16px; word-wrap: break-word\">Tên sản phẩm không được để trống!</div></html>";
     private static final String QUANTITY_BLANK_ERROR_MESSAGE = "<html><div style=\"text-align: center; width: 265px; color: red; font-size: 11px; font-family: Karla; font-weight: 400; line-height: 16px; word-wrap: break-word\">Số lượng sản phẩm không được để trống!</div></html>";
     private static final String PRICE_BLANK_ERROR_MESSAGE = "<html><div style=\"text-align: center; width: 265px; color: red; font-size: 11px; font-family: Karla; font-weight: 400; line-height: 16px; word-wrap: break-word\">Đơn giá sản phẩm không được để trống!</div></html>";
@@ -168,7 +167,6 @@ public final class Main extends javax.swing.JPanel implements ListSelectionListe
     }
 
     private void resetToolbar(boolean state){
-        toolbar__IDInput.setText("");
         toolbar__NameInput.setText("");
         toolbar__CategoryInput.setSelectedIndex(0);
         toolbar__QuantityInput.setText("");
@@ -251,15 +249,18 @@ public final class Main extends javax.swing.JPanel implements ListSelectionListe
         if (ProductServices.getInstance().getSelectedProduct() != null){
             Product product = ProductServices.getInstance().getSelectedProduct();
             if (idCheck == nameCheck == quantityCheck == priceCheck == manafacturerCheck){
-                temp = !(toolbar__IDInput.getText().equals(product.getId())&&
-                        toolbar__NameInput.getText().equals(product.getName())&&
-                        ((String)toolbar__CategoryInput.getSelectedItem()).equals(product.getCategory())&&
-                        (Integer.parseInt(toolbar__QuantityInput.getText()) == product.getQuantity())&&
-                        new BigDecimal(toolbar__PriceInput.getText()).equals(product.getPrice())&&
-                        toolbar__ExpiryInput.getDate().equals(product.getExpDate())&&
-                        toolbar__ManafacturerInput.getText().equals(product.getManafacturer())&&
-                        toolbar__ThumbnailInput.getText().equals(product.getThumbnail())&&
-                        toolbar__DescriptionInput.getText().equals(product.getDescription()));
+                try {
+                    temp = !(toolbar__NameInput.getText().equals(product.getName())&&
+                            ((String)toolbar__CategoryInput.getSelectedItem()).equals(product.getCategory())&&
+                            (Integer.parseInt(toolbar__QuantityInput.getText()) == product.getQuantity())&&
+                            BigDecimalConverter.currencyParse(toolbar__PriceInput.getText()).equals(product.getPrice())&&
+                            toolbar__ExpiryInput.getDate().equals(product.getExpDate())&&
+                            toolbar__ManafacturerInput.getText().equals(product.getManafacturer())&&
+                            toolbar__ThumbnailInput.getText().equals(product.getThumbnail())&&
+                            toolbar__DescriptionInput.getText().equals(product.getDescription()));
+                } catch (ParseException ex) {
+                    showMessage(AUTHORIZATION_ERROR_DIALOG_MESSAGE, false);
+                }
             }
         }
         return temp;
@@ -504,6 +505,55 @@ public final class Main extends javax.swing.JPanel implements ListSelectionListe
         return temp;
     }
     
+    private String IdGenerator(String category){
+        if (!ProductServices.getInstance().getSelectedProduct().getCategory().equals(toolbar__CategoryInput.getSelectedItem().toString())){
+            String id = null;
+            String prefix = null;
+            String suffix;
+            switch (category) {
+                case "Điện thoại" ->{
+                    prefix = "CP";
+                }
+                case "Máy tính" ->{
+                    prefix = "PC";
+                }
+                case "Nội thất" ->{
+                    prefix = "IT";
+                }
+                case "Gia dụng" ->{
+                    prefix = "AL";
+                }
+                case "Trang trí" ->{
+                    prefix = "DC";
+                }
+                case "Thời trang" ->{
+                    prefix = "FS";
+                }
+                case "Thể thao" ->{
+                    prefix = "SP";
+                }
+                case "Mỹ phẩm" ->{
+                    prefix = "CM";
+                }
+                case "Thực phẩm" ->{
+                    prefix = "FD";
+                }
+                default ->{
+                }
+            }
+            Product product = ProductServices.getInstance().filterByCategory(category).stream()
+                    .max(java.util.Comparator.comparing(Product::getId))
+                    .orElseThrow();
+            suffix = product.getId().substring(2);
+            suffix = String.format("%03d", Integer.parseInt(suffix) + 1);
+            id = prefix + suffix;
+            return id;
+        }
+        else{
+            return ProductServices.getInstance().getSelectedProduct().getId();
+        }
+    }
+    
     private void initGeneral(){
         p.setBackground(new Color(246,251,249,0));
         toolbar__ThumbnailInput.setEditable(false);
@@ -588,8 +638,6 @@ public final class Main extends javax.swing.JPanel implements ListSelectionListe
         toolbar__DescriptionTitle = new javax.swing.JLabel();
         toolbar__DescriptionScroll = new javax.swing.JScrollPane();
         toolbar__DescriptionInput = new javax.swing.JTextPane();
-        toolbar__IDTitle = new javax.swing.JLabel();
-        toolbar__IDInput = new hvan.qlkh.utils.TextField(0, Color.BLACK);
         toolbar__ButtonResetSearch = new hvan.qlkh.utils.Button(35, new Color(76, 175, 79, 200), new Color(76, 175, 79), new Color(56, 142, 59));
         main = new javax.swing.JPanel();
         main__Pages = new Panel(40);
@@ -714,6 +762,11 @@ public final class Main extends javax.swing.JPanel implements ListSelectionListe
                 toolbar__PriceInputCaretUpdate(evt);
             }
         });
+        toolbar__PriceInput.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                toolbar__PriceInputKeyReleased(evt);
+            }
+        });
 
         toolbar__ExpiryTitle.setText("<html><div style=\"width: 80px; text-align: left; color:rgba(33, 43, 39, 0.8); font-size: 11px; font-family: Karla; font-weight: 400; line-height: 15px; word-wrap: break-word\">Hạn sử dụng</div></html>");
         toolbar__ExpiryTitle.setMinimumSize(new java.awt.Dimension(105, 20));
@@ -782,7 +835,7 @@ public final class Main extends javax.swing.JPanel implements ListSelectionListe
         toolbar__SortTitle.setPreferredSize(new java.awt.Dimension(340, 30));
 
         toolbar__SortInput.setFont(new java.awt.Font("Segoe UI", 0, 15)); // NOI18N
-        toolbar__SortInput.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Mặc định", "Mã số", "Tên sản phẩm", "Số lượng tăng", "Số lượng giảm", "Đơn giá tăng", "Đơn giá giảm", "Hạn sử dụng" }));
+        toolbar__SortInput.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Mặc định", "Mã số sản phẩm", "Tên sản phẩm", "Số lượng tăng", "Số lượng giảm", "Đơn giá tăng", "Đơn giá giảm", "Hạn sử dụng" }));
         toolbar__SortInput.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         toolbar__SortInput.setPreferredSize(new java.awt.Dimension(230, 35));
 
@@ -802,7 +855,7 @@ public final class Main extends javax.swing.JPanel implements ListSelectionListe
         toolbar__SearchTitle.setPreferredSize(new java.awt.Dimension(100, 35));
 
         toolbar__SearchInput.setFont(new java.awt.Font("Segoe UI", 0, 15)); // NOI18N
-        toolbar__SearchInput.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Mã số", "Tên sản phẩm", "Danh mục", "Đơn giá", "Hạn sử dụng", "Nhà sản xuất" }));
+        toolbar__SearchInput.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Mã số sản phẩm", "Tên sản phẩm", "Danh mục", "Đơn giá", "Hạn sử dụng", "Nhà sản xuất" }));
         toolbar__SearchInput.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         toolbar__SearchInput.setPreferredSize(new java.awt.Dimension(230, 35));
         toolbar__SearchInput.addItemListener(new java.awt.event.ItemListener() {
@@ -919,17 +972,6 @@ public final class Main extends javax.swing.JPanel implements ListSelectionListe
         toolbar__DescriptionInput.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         toolbar__DescriptionScroll.setViewportView(toolbar__DescriptionInput);
 
-        toolbar__IDTitle.setText("<html><div style=\"width: 80px; text-align: left; color:rgba(33, 43, 39, 0.8); font-size: 11px; font-family: Karla; font-weight: 400; line-height: 15px; word-wrap: break-word\">Mã số</div></html>");
-        toolbar__IDTitle.setPreferredSize(new java.awt.Dimension(105, 35));
-
-        toolbar__IDInput.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        toolbar__IDInput.setPreferredSize(new java.awt.Dimension(230, 35));
-        toolbar__IDInput.addCaretListener(new javax.swing.event.CaretListener() {
-            public void caretUpdate(javax.swing.event.CaretEvent evt) {
-                toolbar__IDInputCaretUpdate(evt);
-            }
-        });
-
         toolbar__ButtonResetSearch.setBackground(new Color(76, 175, 79, 200));
         toolbar__ButtonResetSearch.setText("<html><div style=\"text-align: center; color:white; font-size: 12px; font-family: Karla; font-weight: 400; line-height: 160px; word-wrap: break-word\">Hủy</div></html>");
         toolbar__ButtonResetSearch.setBorder(null);
@@ -976,7 +1018,7 @@ public final class Main extends javax.swing.JPanel implements ListSelectionListe
                                             .addGap(5, 5, 5)
                                             .addComponent(toolbar__ThumbnailInput, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                             .addGap(70, 70, 70))
-                                        .addComponent(toolbar__DescriptionScroll, javax.swing.GroupLayout.PREFERRED_SIZE, 341, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                        .addComponent(toolbar__DescriptionScroll, javax.swing.GroupLayout.PREFERRED_SIZE, 340, javax.swing.GroupLayout.PREFERRED_SIZE))
                                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, toolbarLayout.createSequentialGroup()
                                         .addGap(0, 0, Short.MAX_VALUE)
                                         .addComponent(toolbar__Alert, javax.swing.GroupLayout.PREFERRED_SIZE, 340, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -994,13 +1036,11 @@ public final class Main extends javax.swing.JPanel implements ListSelectionListe
                                                 .addComponent(toolbar__CategoryTitle, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                                 .addComponent(toolbar__NameTitle, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                                 .addComponent(toolbar__PriceTitle, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                .addComponent(toolbar__QuantityTitle, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                .addComponent(toolbar__IDTitle, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                                .addComponent(toolbar__QuantityTitle, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                                             .addGap(5, 5, 5)
                                             .addGroup(toolbarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                                 .addComponent(toolbar__CategoryInput, 0, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                                 .addComponent(toolbar__QuantityInput, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                .addComponent(toolbar__IDInput, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                                 .addComponent(toolbar__NameInput, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                                 .addComponent(toolbar__PriceInput, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                                         .addGroup(toolbarLayout.createSequentialGroup()
@@ -1033,11 +1073,7 @@ public final class Main extends javax.swing.JPanel implements ListSelectionListe
                 .addComponent(toolbar__Title, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(20, 20, 20)
                 .addComponent(toolbar__SeparatorTop, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(10, 10, 10)
-                .addGroup(toolbarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(toolbar__IDTitle, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(toolbar__IDInput, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(5, 5, 5)
+                .addGap(15, 15, 15)
                 .addGroup(toolbarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(toolbar__NameInput, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(toolbar__NameTitle, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -1069,24 +1105,24 @@ public final class Main extends javax.swing.JPanel implements ListSelectionListe
                 .addGap(5, 5, 5)
                 .addComponent(toolbar__DescriptionTitle, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(5, 5, 5)
-                .addComponent(toolbar__DescriptionScroll, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(2, 2, 2)
-                .addComponent(toolbar__Alert, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(toolbar__DescriptionScroll, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(5, 5, 5)
+                .addComponent(toolbar__Alert, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(7, 7, 7)
                 .addGroup(toolbarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(toolbar__ButtonAdd, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(toolbar__ButtonEdit, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(toolbar__ButtonDelete, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(toolbar__ButtonReset, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(10, 10, 10)
+                .addGap(15, 15, 15)
                 .addComponent(toolbar__SeparatorBottom, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(10, 10, 10)
+                .addGap(15, 15, 15)
                 .addComponent(toolbar__SortTitle, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(5, 5, 5)
                 .addGroup(toolbarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(toolbar__ButtonSort, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(toolbar__SortInput, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(10, 10, 10)
+                .addGap(15, 15, 15)
                 .addGroup(toolbarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(toolbar__SearchTitle, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(toolbar__SearchInput, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -1103,8 +1139,6 @@ public final class Main extends javax.swing.JPanel implements ListSelectionListe
                     .addComponent(toolbar__ButtonResetSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(10, 10, 10))
         );
-
-        toolbar__IDInput.getAccessibleContext().setAccessibleName("Toolbar__IDInput");
 
         main.setBackground(new Color(76, 175, 79, 200));
         main.setPreferredSize(new java.awt.Dimension(800, 800));
@@ -1134,7 +1168,7 @@ public final class Main extends javax.swing.JPanel implements ListSelectionListe
             pages__HomeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pages__HomeLayout.createSequentialGroup()
                 .addGap(20, 20, 20)
-                .addComponent(home__Table, javax.swing.GroupLayout.DEFAULT_SIZE, 655, Short.MAX_VALUE)
+                .addComponent(home__Table, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGap(30, 30, 30))
         );
 
@@ -1472,7 +1506,7 @@ public final class Main extends javax.swing.JPanel implements ListSelectionListe
             pages__StatisticLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(pages__StatisticLayout.createSequentialGroup()
                 .addGap(20, 20, 20)
-                .addComponent(statistic__Scroll, javax.swing.GroupLayout.DEFAULT_SIZE, 655, Short.MAX_VALUE)
+                .addComponent(statistic__Scroll, javax.swing.GroupLayout.DEFAULT_SIZE, 675, Short.MAX_VALUE)
                 .addGap(15, 15, 15))
         );
 
@@ -1872,9 +1906,9 @@ public final class Main extends javax.swing.JPanel implements ListSelectionListe
                     .addGroup(pages__AuthorizationLayout.createSequentialGroup()
                         .addComponent(authorization__Information, javax.swing.GroupLayout.PREFERRED_SIZE, 285, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(20, 20, 20)
-                        .addComponent(authorization__Filter, javax.swing.GroupLayout.DEFAULT_SIZE, 355, Short.MAX_VALUE)
+                        .addComponent(authorization__Filter, javax.swing.GroupLayout.DEFAULT_SIZE, 360, Short.MAX_VALUE)
                         .addGap(5, 5, 5))
-                    .addComponent(authorization__Table, javax.swing.GroupLayout.DEFAULT_SIZE, 665, Short.MAX_VALUE))
+                    .addComponent(authorization__Table, javax.swing.GroupLayout.DEFAULT_SIZE, 670, Short.MAX_VALUE))
                 .addGap(20, 20, 20))
         );
 
@@ -2003,8 +2037,8 @@ public final class Main extends javax.swing.JPanel implements ListSelectionListe
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(toolbar, javax.swing.GroupLayout.DEFAULT_SIZE, 830, Short.MAX_VALUE)
-            .addComponent(main, javax.swing.GroupLayout.DEFAULT_SIZE, 830, Short.MAX_VALUE)
+            .addComponent(toolbar, javax.swing.GroupLayout.DEFAULT_SIZE, 835, Short.MAX_VALUE)
+            .addComponent(main, javax.swing.GroupLayout.DEFAULT_SIZE, 835, Short.MAX_VALUE)
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -2020,16 +2054,6 @@ public final class Main extends javax.swing.JPanel implements ListSelectionListe
     private void toolbar__ButtonAddMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_toolbar__ButtonAddMouseClicked
         if (UserServices.getInstance().getCurrentUser().isWrite()){
             if (toolbar__ButtonAdd.isEnabled()){
-                if (!idCheck){
-                    Pattern pattern = Pattern.compile(ID_FORMAT);
-                    if (!pattern.matcher(toolbar__IDInput.getText()).find()){
-                        toolbar__Alert.setText(ID_FORMAT_ERROR_MESSAGE);
-                    }
-                    else{
-                        toolbar__Alert.setText(ID_EXIST_ERROR_MESSAGE);
-                    }
-                }
-                else{
                     if (!nameCheck){
                         toolbar__Alert.setText(NAME_EXIST_ERROR_MESSAGE);
                     }
@@ -2043,11 +2067,6 @@ public final class Main extends javax.swing.JPanel implements ListSelectionListe
                             }
                         }
                     }
-                }
-                if (toolbar__IDInput.getText().equals("")){
-                    toolbar__Alert.setText(ID_BLANK_ERROR_MESSAGE);
-                }
-                else{
                     if (toolbar__NameInput.getText().equals("")){
                         toolbar__Alert.setText(NAME_BLANK_ERROR_MESSAGE);
                     }
@@ -2068,7 +2087,7 @@ public final class Main extends javax.swing.JPanel implements ListSelectionListe
                                         toolbar__Alert.setText(MANAFACTURER_BLANK_ERROR_MESSAGE);
                                     }
                                     else{
-                                        if (idCheck == nameCheck == quantityCheck == priceCheck == manafacturerCheck){
+                                        if (nameCheck == quantityCheck == priceCheck == manafacturerCheck){
                                             String path = toolbar__ThumbnailInput.getText();
                                             if (!path.equals("")){
                                                 try {
@@ -2080,7 +2099,7 @@ public final class Main extends javax.swing.JPanel implements ListSelectionListe
                                                     showMessage(UNKNOWN_ERROR_DIALOG_MESSAGE, false);
                                                 }
                                             }
-                                            Product temp = new Product(toolbar__IDInput.getText(), toolbar__NameInput.getText(), (String) toolbar__CategoryInput.getSelectedItem(), Integer.parseInt(toolbar__QuantityInput.getText()), new BigDecimal(toolbar__PriceInput.getText()), toolbar__ExpiryInput.getDate(), toolbar__ManafacturerInput.getText());
+                                            Product temp = new Product(IdGenerator(toolbar__CategoryInput.getSelectedItem().toString()), toolbar__NameInput.getText(), (String) toolbar__CategoryInput.getSelectedItem(), Integer.parseInt(toolbar__QuantityInput.getText()), new BigDecimal(toolbar__PriceInput.getText()), toolbar__ExpiryInput.getDate(), toolbar__ManafacturerInput.getText());
                                             if(!toolbar__ThumbnailInput.getText().equals("") || toolbar__ThumbnailInput.getText() == null){
                                                 temp.setThumbnail(toolbar__ThumbnailInput.getText());
                                             }
@@ -2101,7 +2120,6 @@ public final class Main extends javax.swing.JPanel implements ListSelectionListe
                         }
                     }
                 }
-            }
         }
         else{
             resetToolbar(true);
@@ -2164,24 +2182,10 @@ public final class Main extends javax.swing.JPanel implements ListSelectionListe
     private void toolbar__PriceInputCaretUpdate(javax.swing.event.CaretEvent evt) {//GEN-FIRST:event_toolbar__PriceInputCaretUpdate
         if (UserServices.getInstance().getCurrentUser().isWrite()){
             if (toolbar__PriceInput.getText().equals("")) {
-                priceCheck = false;
                 toolbar__Alert.setText(PRICE_BLANK_ERROR_MESSAGE);
             }
             else{
-                try {
-                    Pattern pattern = Pattern.compile("^\\d+$");
-                    if (pattern.matcher(toolbar__PriceInput.getText()).find()){
-                        priceCheck = true;
-                        toolbar__Alert.setText(NULL_MESSAGE);
-                    }
-                    else{
-                        priceCheck = false;
-                        toolbar__Alert.setText(PRICE_FORMAT_ERROR_MESSAGE);
-                    }
-                } catch (Exception e) {
-                    priceCheck = false;
-                    toolbar__Alert.setText(PRICE_FORMAT_ERROR_MESSAGE);
-                }
+                toolbar__Alert.setText(NULL_MESSAGE);
             }
         }
     }//GEN-LAST:event_toolbar__PriceInputCaretUpdate
@@ -2197,45 +2201,6 @@ public final class Main extends javax.swing.JPanel implements ListSelectionListe
             }
         }
     }//GEN-LAST:event_toolbar__ButtonFileChooserMouseClicked
-
-    private void toolbar__IDInputCaretUpdate(javax.swing.event.CaretEvent evt) {//GEN-FIRST:event_toolbar__IDInputCaretUpdate
-        if (UserServices.getInstance().getCurrentUser().isWrite()){
-            Pattern pattern = Pattern.compile(ID_FORMAT);
-            if (pattern.matcher(toolbar__IDInput.getText()).find()){
-                if (toolbar__IDInput.getText().equals("")) {
-                    idCheck = false;
-                    toolbar__Alert.setText(ID_BLANK_ERROR_MESSAGE);
-                }
-                else{
-                    if (ProductServices.getInstance().getSelectedProduct() != null){
-                        if (ProductServices.getInstance().findById(toolbar__IDInput.getText()) == null ||
-                                ProductServices.getInstance().getSelectedProduct().getId().equals(toolbar__IDInput.getText())){
-                            idCheck = true;
-                            toolbar__Alert.setText(NULL_MESSAGE);
-                        }
-                        else{
-                            idCheck = false;
-                            toolbar__Alert.setText(ID_EXIST_ERROR_MESSAGE);
-                        }
-                    }
-                    else{
-                        if (ProductServices.getInstance().findById(toolbar__IDInput.getText()) == null){
-                            idCheck = true;
-                            toolbar__Alert.setText(NULL_MESSAGE);
-                        }
-                        else{
-                            idCheck = false;
-                            toolbar__Alert.setText(ID_EXIST_ERROR_MESSAGE);
-                        }
-                    }
-                }
-            }
-            else{
-                idCheck = false;
-                toolbar__Alert.setText(ID_FORMAT_ERROR_MESSAGE);
-            }
-        }
-    }//GEN-LAST:event_toolbar__IDInputCaretUpdate
 
     private void navbar__ButtonHomeMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_navbar__ButtonHomeMouseClicked
         accessPage = PAGES_HOME;
@@ -2332,16 +2297,6 @@ public final class Main extends javax.swing.JPanel implements ListSelectionListe
     private void toolbar__ButtonEditMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_toolbar__ButtonEditMouseClicked
         if (UserServices.getInstance().getCurrentUser().isWrite()){
             if (toolbar__ButtonEdit.isEnabled() && isModify()){
-                if (!idCheck){
-                    Pattern pattern = Pattern.compile(ID_FORMAT);
-                    if (!pattern.matcher(toolbar__IDInput.getText()).find()){
-                        toolbar__Alert.setText(ID_FORMAT_ERROR_MESSAGE);
-                    }
-                    else{
-                        toolbar__Alert.setText(ID_EXIST_ERROR_MESSAGE);
-                    }
-                }
-                else{
                     if (!nameCheck){
                         toolbar__Alert.setText(NAME_EXIST_ERROR_MESSAGE);
                     }
@@ -2355,11 +2310,6 @@ public final class Main extends javax.swing.JPanel implements ListSelectionListe
                             }
                         }
                     }
-                }
-                if (toolbar__IDInput.getText().equals("")){
-                    toolbar__Alert.setText(ID_BLANK_ERROR_MESSAGE);
-                }
-                else{
                     if (toolbar__NameInput.getText().equals("")){
                         toolbar__Alert.setText(NAME_BLANK_ERROR_MESSAGE);
                     }
@@ -2381,7 +2331,7 @@ public final class Main extends javax.swing.JPanel implements ListSelectionListe
                                         toolbar__Alert.setText(MANAFACTURER_BLANK_ERROR_MESSAGE);
                                     }
                                     else{
-                                        if (idCheck == nameCheck == quantityCheck == priceCheck == dateCheck == manafacturerCheck){
+                                        if (nameCheck == quantityCheck == priceCheck == dateCheck == manafacturerCheck){
                                             JDialog.setDefaultLookAndFeelDecorated(true);
                                             int response = JOptionPane.showConfirmDialog(null, "Bạn chắc chắn muốn sửa thông tin sản phẩm này?", TYPE_DIALOG_MESSAGE,
                                                     JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
@@ -2404,11 +2354,11 @@ public final class Main extends javax.swing.JPanel implements ListSelectionListe
                                                         }
                                                     }
                                                     try {
-                                                        String id  = toolbar__IDInput.getText();
+                                                        String id  = IdGenerator(toolbar__CategoryInput.getSelectedItem().toString());
                                                         String name = toolbar__NameInput.getText();
-                                                        String category = (String) toolbar__CategoryInput.getSelectedItem();
+                                                        String category = toolbar__CategoryInput.getSelectedItem().toString();
                                                         int quantity = Integer.parseInt(toolbar__QuantityInput.getText());
-                                                        BigDecimal price = new BigDecimal(toolbar__PriceInput.getText());
+                                                        BigDecimal price = BigDecimalConverter.currencyParse(toolbar__PriceInput.getText());
                                                         Date expDate = toolbar__ExpiryInput.getDate();
                                                         String manafacturer = toolbar__ManafacturerInput.getText();
                                                         String thumbnail = toolbar__ThumbnailInput.getText();
@@ -2421,7 +2371,7 @@ public final class Main extends javax.swing.JPanel implements ListSelectionListe
                                                         setSort(ProductServices.getInstance().getProducts());
                                                         setStatistic();
                                                         setProductTemplates(ProductServices.getInstance().getProducts());
-                                                    } catch (NumberFormatException  e) {
+                                                    } catch (NumberFormatException | ParseException e) {
                                                         showMessage(UNKNOWN_ERROR_DIALOG_MESSAGE, false);
                                                     }
                                                 }
@@ -2436,7 +2386,6 @@ public final class Main extends javax.swing.JPanel implements ListSelectionListe
                             }
                         }
                     }
-                }
             }
         }
         else{
@@ -2570,43 +2519,43 @@ public final class Main extends javax.swing.JPanel implements ListSelectionListe
     private void toolbar__ButtonSearchMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_toolbar__ButtonSearchMouseClicked
         if (toolbar__SearchInput.getSelectedItem().toString().equals(ID)){
             if (accessPage == PAGES_HOME){
-                appController.setProductsTable(productsTable, ProductServices.getInstance().filterById(toolbar__SearchStringInput.getText().trim()));
+                appController.setProductsTable(productsTable, ProductServices.getInstance().filterById(toolbar__SearchStringInput.getText()));
             }
             if (accessPage == PAGES_PRODUCTS){
-                filter(ProductServices.getInstance().filterById(toolbar__SearchStringInput.getText().trim()));
+                filter(ProductServices.getInstance().filterById(toolbar__SearchStringInput.getText()));
                 productSearchModify = true;
             }
         }
         if (toolbar__SearchInput.getSelectedItem().toString().equals(NAME)){
             if (accessPage == PAGES_HOME){
-                appController.setProductsTable(productsTable, ProductServices.getInstance().filterByName(toolbar__SearchStringInput.getText().trim()));
+                appController.setProductsTable(productsTable, ProductServices.getInstance().filterByName(toolbar__SearchStringInput.getText()));
             }
             if (accessPage == PAGES_PRODUCTS){
-                filter(ProductServices.getInstance().filterByName(toolbar__SearchStringInput.getText().trim()));
+                filter(ProductServices.getInstance().filterByName(toolbar__SearchStringInput.getText()));
                 productSearchModify = true;
             }
         }
         if (toolbar__SearchInput.getSelectedItem().toString().equals(CATEGORY)){
             if (accessPage == PAGES_HOME){
-                appController.setProductsTable(productsTable, ProductServices.getInstance().filterByCategory(toolbar__SearchStringInput.getText().trim()));
+                appController.setProductsTable(productsTable, ProductServices.getInstance().filterByCategory(toolbar__SearchStringInput.getText()));
             }
             if (accessPage == PAGES_PRODUCTS){
-                filter(ProductServices.getInstance().filterByCategory(toolbar__SearchStringInput.getText().trim()));
+                filter(ProductServices.getInstance().filterByCategory(toolbar__SearchStringInput.getText()));
                 productSearchModify = true;
             }
         }
         if (toolbar__SearchInput.getSelectedItem().toString().equals(MANAFACTURER)){
             if (accessPage == PAGES_HOME){
-                appController.setProductsTable(productsTable, ProductServices.getInstance().filterByManafacturer(toolbar__SearchStringInput.getText().trim()));
+                appController.setProductsTable(productsTable, ProductServices.getInstance().filterByManafacturer(toolbar__SearchStringInput.getText()));
             }
             if (accessPage == PAGES_PRODUCTS){
-                filter(ProductServices.getInstance().filterByManafacturer(toolbar__SearchStringInput.getText().trim()));
+                filter(ProductServices.getInstance().filterByManafacturer(toolbar__SearchStringInput.getText()));
                 productSearchModify = true;
             }
         }
         if (toolbar__SearchInput.getSelectedItem().toString().equals(PRICE)){
-            BigDecimal minPrice = new BigDecimal(toolbar__SearchMinInput.getText().trim());
-            BigDecimal maxPrice = new BigDecimal(toolbar__SearchMaxInput.getText().trim());
+            BigDecimal minPrice = new BigDecimal(toolbar__SearchMinInput.getText());
+            BigDecimal maxPrice = new BigDecimal(toolbar__SearchMaxInput.getText());
             if (accessPage == PAGES_HOME){
                 appController.setProductsTable(productsTable, ProductServices.getInstance().filterByPrice(minPrice, maxPrice));
             }
@@ -2617,8 +2566,8 @@ public final class Main extends javax.swing.JPanel implements ListSelectionListe
         }
         if (toolbar__SearchInput.getSelectedItem().toString().equals(EXPIRY)){
             try {
-                Date minDate = new SimpleDateFormat(DATE_FORMAT).parse(toolbar__SearchMinInput.getText().trim());
-                Date maxDate = new SimpleDateFormat(DATE_FORMAT).parse(toolbar__SearchMaxInput.getText().trim());
+                Date minDate = new SimpleDateFormat(DATE_FORMAT).parse(toolbar__SearchMinInput.getText());
+                Date maxDate = new SimpleDateFormat(DATE_FORMAT).parse(toolbar__SearchMaxInput.getText());
                 if (accessPage == PAGES_HOME){
                     appController.setProductsTable(productsTable, ProductServices.getInstance().filterByExpiry(minDate, maxDate));
                 }
@@ -2731,13 +2680,13 @@ public final class Main extends javax.swing.JPanel implements ListSelectionListe
     }//GEN-LAST:event_information__ButtonEditMouseClicked
 
     private void filter__ButtonFilterMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_filter__ButtonFilterMouseClicked
-        String username = filter__UsernameInput.getText().trim();
+        String username = filter__UsernameInput.getText();
         Date dateMin = null;
         Date dateMax = null;
         if (!filter__RegisterDateMin.getText().equals("") && !filter__RegisterDateMax.getText().equals("")){
             try {
-                dateMin = new SimpleDateFormat(DATE_FORMAT).parse(filter__RegisterDateMin.getText().trim());
-                dateMax = new SimpleDateFormat(DATE_FORMAT).parse(filter__RegisterDateMax.getText().trim());
+                dateMin = new SimpleDateFormat(DATE_FORMAT).parse(filter__RegisterDateMin.getText());
+                dateMax = new SimpleDateFormat(DATE_FORMAT).parse(filter__RegisterDateMax.getText());
             } catch (ParseException e) {
                 showMessage(CREATE_FORMAT_ERROR_DIALOG_MESSAGE, false);
             }
@@ -2801,43 +2750,43 @@ public final class Main extends javax.swing.JPanel implements ListSelectionListe
         if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
             if (toolbar__SearchInput.getSelectedItem().toString().equals(ID)){
                 if (accessPage == PAGES_HOME){
-                    appController.setProductsTable(productsTable, ProductServices.getInstance().filterById(toolbar__SearchStringInput.getText().trim()));
+                    appController.setProductsTable(productsTable, ProductServices.getInstance().filterById(toolbar__SearchStringInput.getText()));
                 }
                 if (accessPage == PAGES_PRODUCTS){
-                    filter(ProductServices.getInstance().filterById(toolbar__SearchStringInput.getText().trim()));
+                    filter(ProductServices.getInstance().filterById(toolbar__SearchStringInput.getText()));
                     productSearchModify = true;
                 }
             }
             if (toolbar__SearchInput.getSelectedItem().toString().equals(NAME)){
                 if (accessPage == PAGES_HOME){
-                    appController.setProductsTable(productsTable, ProductServices.getInstance().filterByName(toolbar__SearchStringInput.getText().trim()));
+                    appController.setProductsTable(productsTable, ProductServices.getInstance().filterByName(toolbar__SearchStringInput.getText()));
                 }
                 if (accessPage == PAGES_PRODUCTS){
-                    filter(ProductServices.getInstance().filterByName(toolbar__SearchStringInput.getText().trim()));
+                    filter(ProductServices.getInstance().filterByName(toolbar__SearchStringInput.getText()));
                     productSearchModify = true;
                 }
             }
             if (toolbar__SearchInput.getSelectedItem().toString().equals(CATEGORY)){
                 if (accessPage == PAGES_HOME){
-                    appController.setProductsTable(productsTable, ProductServices.getInstance().filterByCategory(toolbar__SearchStringInput.getText().trim()));
+                    appController.setProductsTable(productsTable, ProductServices.getInstance().filterByCategory(toolbar__SearchStringInput.getText()));
                 }
                 if (accessPage == PAGES_PRODUCTS){
-                    filter(ProductServices.getInstance().filterByCategory(toolbar__SearchStringInput.getText().trim()));
+                    filter(ProductServices.getInstance().filterByCategory(toolbar__SearchStringInput.getText()));
                     productSearchModify = true;
                 }
             }
             if (toolbar__SearchInput.getSelectedItem().toString().equals(MANAFACTURER)){
                 if (accessPage == PAGES_HOME){
-                    appController.setProductsTable(productsTable, ProductServices.getInstance().filterByManafacturer(toolbar__SearchStringInput.getText().trim()));
+                    appController.setProductsTable(productsTable, ProductServices.getInstance().filterByManafacturer(toolbar__SearchStringInput.getText()));
                 }
                 if (accessPage == PAGES_PRODUCTS){
-                    filter(ProductServices.getInstance().filterByManafacturer(toolbar__SearchStringInput.getText().trim()));
+                    filter(ProductServices.getInstance().filterByManafacturer(toolbar__SearchStringInput.getText()));
                     productSearchModify = true;
                 }
             }
             if (toolbar__SearchInput.getSelectedItem().toString().equals(PRICE)){
-                BigDecimal minPrice = new BigDecimal(toolbar__SearchMinInput.getText().trim());
-                BigDecimal maxPrice = new BigDecimal(toolbar__SearchMaxInput.getText().trim());
+                BigDecimal minPrice = new BigDecimal(toolbar__SearchMinInput.getText());
+                BigDecimal maxPrice = new BigDecimal(toolbar__SearchMaxInput.getText());
                 if (accessPage == PAGES_HOME){
                     appController.setProductsTable(productsTable, ProductServices.getInstance().filterByPrice(minPrice, maxPrice));
                 }
@@ -2848,8 +2797,8 @@ public final class Main extends javax.swing.JPanel implements ListSelectionListe
             }
             if (toolbar__SearchInput.getSelectedItem().toString().equals(EXPIRY)){
                 try {
-                    Date minDate = new SimpleDateFormat(DATE_FORMAT).parse(toolbar__SearchMinInput.getText().trim());
-                    Date maxDate = new SimpleDateFormat(DATE_FORMAT).parse(toolbar__SearchMaxInput.getText().trim());
+                    Date minDate = new SimpleDateFormat(DATE_FORMAT).parse(toolbar__SearchMinInput.getText());
+                    Date maxDate = new SimpleDateFormat(DATE_FORMAT).parse(toolbar__SearchMaxInput.getText());
                     if (accessPage == PAGES_HOME){
                         appController.setProductsTable(productsTable, ProductServices.getInstance().filterByExpiry(minDate, maxDate));
                     }
@@ -2874,43 +2823,43 @@ public final class Main extends javax.swing.JPanel implements ListSelectionListe
         if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
             if (toolbar__SearchInput.getSelectedItem().toString().equals(ID)){
                 if (accessPage == PAGES_HOME){
-                    appController.setProductsTable(productsTable, ProductServices.getInstance().filterById(toolbar__SearchStringInput.getText().trim()));
+                    appController.setProductsTable(productsTable, ProductServices.getInstance().filterById(toolbar__SearchStringInput.getText()));
                 }
                 if (accessPage == PAGES_PRODUCTS){
-                    filter(ProductServices.getInstance().filterById(toolbar__SearchStringInput.getText().trim()));
+                    filter(ProductServices.getInstance().filterById(toolbar__SearchStringInput.getText()));
                     productSearchModify = true;
                 }
             }
             if (toolbar__SearchInput.getSelectedItem().toString().equals(NAME)){
                 if (accessPage == PAGES_HOME){
-                    appController.setProductsTable(productsTable, ProductServices.getInstance().filterByName(toolbar__SearchStringInput.getText().trim()));
+                    appController.setProductsTable(productsTable, ProductServices.getInstance().filterByName(toolbar__SearchStringInput.getText()));
                 }
                 if (accessPage == PAGES_PRODUCTS){
-                    filter(ProductServices.getInstance().filterByName(toolbar__SearchStringInput.getText().trim()));
+                    filter(ProductServices.getInstance().filterByName(toolbar__SearchStringInput.getText()));
                     productSearchModify = true;
                 }
             }
             if (toolbar__SearchInput.getSelectedItem().toString().equals(CATEGORY)){
                 if (accessPage == PAGES_HOME){
-                    appController.setProductsTable(productsTable, ProductServices.getInstance().filterByCategory(toolbar__SearchStringInput.getText().trim()));
+                    appController.setProductsTable(productsTable, ProductServices.getInstance().filterByCategory(toolbar__SearchStringInput.getText()));
                 }
                 if (accessPage == PAGES_PRODUCTS){
-                    filter(ProductServices.getInstance().filterByCategory(toolbar__SearchStringInput.getText().trim()));
+                    filter(ProductServices.getInstance().filterByCategory(toolbar__SearchStringInput.getText()));
                     productSearchModify = true;
                 }
             }
             if (toolbar__SearchInput.getSelectedItem().toString().equals(MANAFACTURER)){
                 if (accessPage == PAGES_HOME){
-                    appController.setProductsTable(productsTable, ProductServices.getInstance().filterByManafacturer(toolbar__SearchStringInput.getText().trim()));
+                    appController.setProductsTable(productsTable, ProductServices.getInstance().filterByManafacturer(toolbar__SearchStringInput.getText()));
                 }
                 if (accessPage == PAGES_PRODUCTS){
-                    filter(ProductServices.getInstance().filterByManafacturer(toolbar__SearchStringInput.getText().trim()));
+                    filter(ProductServices.getInstance().filterByManafacturer(toolbar__SearchStringInput.getText()));
                     productSearchModify = true;
                 }
             }
             if (toolbar__SearchInput.getSelectedItem().toString().equals(PRICE)){
-                BigDecimal minPrice = new BigDecimal(toolbar__SearchMinInput.getText().trim());
-                BigDecimal maxPrice = new BigDecimal(toolbar__SearchMaxInput.getText().trim());
+                BigDecimal minPrice = new BigDecimal(toolbar__SearchMinInput.getText());
+                BigDecimal maxPrice = new BigDecimal(toolbar__SearchMaxInput.getText());
                 if (accessPage == PAGES_HOME){
                     appController.setProductsTable(productsTable, ProductServices.getInstance().filterByPrice(minPrice, maxPrice));
                 }
@@ -2921,8 +2870,8 @@ public final class Main extends javax.swing.JPanel implements ListSelectionListe
             }
             if (toolbar__SearchInput.getSelectedItem().toString().equals(EXPIRY)){
                 try {
-                    Date minDate = new SimpleDateFormat(DATE_FORMAT).parse(toolbar__SearchMinInput.getText().trim());
-                    Date maxDate = new SimpleDateFormat(DATE_FORMAT).parse(toolbar__SearchMaxInput.getText().trim());
+                    Date minDate = new SimpleDateFormat(DATE_FORMAT).parse(toolbar__SearchMinInput.getText());
+                    Date maxDate = new SimpleDateFormat(DATE_FORMAT).parse(toolbar__SearchMaxInput.getText());
                     if (accessPage == PAGES_HOME){
                         appController.setProductsTable(productsTable, ProductServices.getInstance().filterByExpiry(minDate, maxDate));
                     }
@@ -2947,43 +2896,43 @@ public final class Main extends javax.swing.JPanel implements ListSelectionListe
         if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
             if (toolbar__SearchInput.getSelectedItem().toString().equals(ID)){
                 if (accessPage == PAGES_HOME){
-                    appController.setProductsTable(productsTable, ProductServices.getInstance().filterById(toolbar__SearchStringInput.getText().trim()));
+                    appController.setProductsTable(productsTable, ProductServices.getInstance().filterById(toolbar__SearchStringInput.getText()));
                 }
                 if (accessPage == PAGES_PRODUCTS){
-                    filter(ProductServices.getInstance().filterById(toolbar__SearchStringInput.getText().trim()));
+                    filter(ProductServices.getInstance().filterById(toolbar__SearchStringInput.getText()));
                     productSearchModify = true;
                 }
             }
             if (toolbar__SearchInput.getSelectedItem().toString().equals(NAME)){
                 if (accessPage == PAGES_HOME){
-                    appController.setProductsTable(productsTable, ProductServices.getInstance().filterByName(toolbar__SearchStringInput.getText().trim()));
+                    appController.setProductsTable(productsTable, ProductServices.getInstance().filterByName(toolbar__SearchStringInput.getText()));
                 }
                 if (accessPage == PAGES_PRODUCTS){
-                    filter(ProductServices.getInstance().filterByName(toolbar__SearchStringInput.getText().trim()));
+                    filter(ProductServices.getInstance().filterByName(toolbar__SearchStringInput.getText()));
                     productSearchModify = true;
                 }
             }
             if (toolbar__SearchInput.getSelectedItem().toString().equals(CATEGORY)){
                 if (accessPage == PAGES_HOME){
-                    appController.setProductsTable(productsTable, ProductServices.getInstance().filterByCategory(toolbar__SearchStringInput.getText().trim()));
+                    appController.setProductsTable(productsTable, ProductServices.getInstance().filterByCategory(toolbar__SearchStringInput.getText()));
                 }
                 if (accessPage == PAGES_PRODUCTS){
-                    filter(ProductServices.getInstance().filterByCategory(toolbar__SearchStringInput.getText().trim()));
+                    filter(ProductServices.getInstance().filterByCategory(toolbar__SearchStringInput.getText()));
                     productSearchModify = true;
                 }
             }
             if (toolbar__SearchInput.getSelectedItem().toString().equals(MANAFACTURER)){
                 if (accessPage == PAGES_HOME){
-                    appController.setProductsTable(productsTable, ProductServices.getInstance().filterByManafacturer(toolbar__SearchStringInput.getText().trim()));
+                    appController.setProductsTable(productsTable, ProductServices.getInstance().filterByManafacturer(toolbar__SearchStringInput.getText()));
                 }
                 if (accessPage == PAGES_PRODUCTS){
-                    filter(ProductServices.getInstance().filterByManafacturer(toolbar__SearchStringInput.getText().trim()));
+                    filter(ProductServices.getInstance().filterByManafacturer(toolbar__SearchStringInput.getText()));
                     productSearchModify = true;
                 }
             }
             if (toolbar__SearchInput.getSelectedItem().toString().equals(PRICE)){
-                BigDecimal minPrice = new BigDecimal(toolbar__SearchMinInput.getText().trim());
-                BigDecimal maxPrice = new BigDecimal(toolbar__SearchMaxInput.getText().trim());
+                BigDecimal minPrice = new BigDecimal(toolbar__SearchMinInput.getText());
+                BigDecimal maxPrice = new BigDecimal(toolbar__SearchMaxInput.getText());
                 if (accessPage == PAGES_HOME){
                     appController.setProductsTable(productsTable, ProductServices.getInstance().filterByPrice(minPrice, maxPrice));
                 }
@@ -2994,8 +2943,8 @@ public final class Main extends javax.swing.JPanel implements ListSelectionListe
             }
             if (toolbar__SearchInput.getSelectedItem().toString().equals(EXPIRY)){
                 try {
-                    Date minDate = new SimpleDateFormat(DATE_FORMAT).parse(toolbar__SearchMinInput.getText().trim());
-                    Date maxDate = new SimpleDateFormat(DATE_FORMAT).parse(toolbar__SearchMaxInput.getText().trim());
+                    Date minDate = new SimpleDateFormat(DATE_FORMAT).parse(toolbar__SearchMinInput.getText());
+                    Date maxDate = new SimpleDateFormat(DATE_FORMAT).parse(toolbar__SearchMaxInput.getText());
                     if (accessPage == PAGES_HOME){
                         appController.setProductsTable(productsTable, ProductServices.getInstance().filterByExpiry(minDate, maxDate));
                     }
@@ -3018,13 +2967,13 @@ public final class Main extends javax.swing.JPanel implements ListSelectionListe
 
     private void filter__UsernameInputKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_filter__UsernameInputKeyPressed
         if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
-            String username = filter__UsernameInput.getText().trim();
+            String username = filter__UsernameInput.getText();
             Date dateMin = null;
             Date dateMax = null;
             if (!filter__RegisterDateMin.getText().equals("") && !filter__RegisterDateMax.getText().equals("")){
                 try {
-                    dateMin = new SimpleDateFormat(DATE_FORMAT).parse(filter__RegisterDateMin.getText().trim());
-                    dateMax = new SimpleDateFormat(DATE_FORMAT).parse(filter__RegisterDateMax.getText().trim());
+                    dateMin = new SimpleDateFormat(DATE_FORMAT).parse(filter__RegisterDateMin.getText());
+                    dateMax = new SimpleDateFormat(DATE_FORMAT).parse(filter__RegisterDateMax.getText());
                 } catch (ParseException e) {
                     showMessage(CREATE_FORMAT_ERROR_DIALOG_MESSAGE, false);
                 }
@@ -3036,13 +2985,13 @@ public final class Main extends javax.swing.JPanel implements ListSelectionListe
 
     private void filter__RegisterDateMinKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_filter__RegisterDateMinKeyPressed
         if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
-            String username = filter__UsernameInput.getText().trim();
+            String username = filter__UsernameInput.getText();
             Date dateMin = null;
             Date dateMax = null;
             if (!filter__RegisterDateMin.getText().equals("") && !filter__RegisterDateMax.getText().equals("")){
                 try {
-                    dateMin = new SimpleDateFormat(DATE_FORMAT).parse(filter__RegisterDateMin.getText().trim());
-                    dateMax = new SimpleDateFormat(DATE_FORMAT).parse(filter__RegisterDateMax.getText().trim());
+                    dateMin = new SimpleDateFormat(DATE_FORMAT).parse(filter__RegisterDateMin.getText());
+                    dateMax = new SimpleDateFormat(DATE_FORMAT).parse(filter__RegisterDateMax.getText());
                 } catch (ParseException e) {
                     showMessage(CREATE_FORMAT_ERROR_DIALOG_MESSAGE, false);
                 }
@@ -3054,13 +3003,13 @@ public final class Main extends javax.swing.JPanel implements ListSelectionListe
 
     private void filter__RegisterDateMaxKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_filter__RegisterDateMaxKeyPressed
         if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
-            String username = filter__UsernameInput.getText().trim();
+            String username = filter__UsernameInput.getText();
             Date dateMin = null;
             Date dateMax = null;
             if (!filter__RegisterDateMin.getText().equals("") && !filter__RegisterDateMax.getText().equals("")){
                 try {
-                    dateMin = new SimpleDateFormat(DATE_FORMAT).parse(filter__RegisterDateMin.getText().trim());
-                    dateMax = new SimpleDateFormat(DATE_FORMAT).parse(filter__RegisterDateMax.getText().trim());
+                    dateMin = new SimpleDateFormat(DATE_FORMAT).parse(filter__RegisterDateMin.getText());
+                    dateMax = new SimpleDateFormat(DATE_FORMAT).parse(filter__RegisterDateMax.getText());
                 } catch (ParseException e) {
                     showMessage(CREATE_FORMAT_ERROR_DIALOG_MESSAGE, false);
                 }
@@ -3072,13 +3021,13 @@ public final class Main extends javax.swing.JPanel implements ListSelectionListe
 
     private void filter__ReadInputKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_filter__ReadInputKeyPressed
         if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
-            String username = filter__UsernameInput.getText().trim();
+            String username = filter__UsernameInput.getText();
             Date dateMin = null;
             Date dateMax = null;
             if (!filter__RegisterDateMin.getText().equals("") && !filter__RegisterDateMax.getText().equals("")){
                 try {
-                    dateMin = new SimpleDateFormat(DATE_FORMAT).parse(filter__RegisterDateMin.getText().trim());
-                    dateMax = new SimpleDateFormat(DATE_FORMAT).parse(filter__RegisterDateMax.getText().trim());
+                    dateMin = new SimpleDateFormat(DATE_FORMAT).parse(filter__RegisterDateMin.getText());
+                    dateMax = new SimpleDateFormat(DATE_FORMAT).parse(filter__RegisterDateMax.getText());
                 } catch (ParseException e) {
                     showMessage(CREATE_FORMAT_ERROR_DIALOG_MESSAGE, false);
                 }
@@ -3090,13 +3039,13 @@ public final class Main extends javax.swing.JPanel implements ListSelectionListe
 
     private void filter__WriteInputKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_filter__WriteInputKeyPressed
         if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
-            String username = filter__UsernameInput.getText().trim();
+            String username = filter__UsernameInput.getText();
             Date dateMin = null;
             Date dateMax = null;
             if (!filter__RegisterDateMin.getText().equals("") && !filter__RegisterDateMax.getText().equals("")){
                 try {
-                    dateMin = new SimpleDateFormat(DATE_FORMAT).parse(filter__RegisterDateMin.getText().trim());
-                    dateMax = new SimpleDateFormat(DATE_FORMAT).parse(filter__RegisterDateMax.getText().trim());
+                    dateMin = new SimpleDateFormat(DATE_FORMAT).parse(filter__RegisterDateMin.getText());
+                    dateMax = new SimpleDateFormat(DATE_FORMAT).parse(filter__RegisterDateMax.getText());
                 } catch (ParseException e) {
                     showMessage(CREATE_FORMAT_ERROR_DIALOG_MESSAGE, false);
                 }
@@ -3106,6 +3055,33 @@ public final class Main extends javax.swing.JPanel implements ListSelectionListe
         }
     }//GEN-LAST:event_filter__WriteInputKeyPressed
 
+    private void toolbar__PriceInputKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_toolbar__PriceInputKeyReleased
+        if (UserServices.getInstance().getCurrentUser().isWrite()){
+            if (toolbar__PriceInput.getText().equals("")) {
+                priceCheck = false;
+                toolbar__Alert.setText(PRICE_BLANK_ERROR_MESSAGE);
+            }
+            else{
+                String price = toolbar__PriceInput.getText().replaceAll("\\.", "");
+                Pattern pattern = Pattern.compile("^\\d+$");
+                if (pattern.matcher(price).find()){
+                    priceCheck = true;
+                    toolbar__Alert.setText(NULL_MESSAGE);
+                    NumberFormat currencyFormat = NumberFormat.getCurrencyInstance();
+                    DecimalFormatSymbols decimalFormatSymbols = ((DecimalFormat) currencyFormat).getDecimalFormatSymbols();
+                    decimalFormatSymbols.setCurrencySymbol("");
+                    ((DecimalFormat) currencyFormat).setDecimalFormatSymbols(decimalFormatSymbols);
+                    price = currencyFormat.format(new BigDecimal(price)).trim();
+                    price = price.substring(0, price.length() - 1);
+                    toolbar__PriceInput.setText(price);
+                }
+                else{
+                    priceCheck = false;
+                    toolbar__Alert.setText(PRICE_FORMAT_ERROR_MESSAGE);
+                }
+            }
+        }
+    }//GEN-LAST:event_toolbar__PriceInputKeyReleased
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel authorization__Filter;
@@ -3199,8 +3175,6 @@ public final class Main extends javax.swing.JPanel implements ListSelectionListe
     private javax.swing.JLabel toolbar__DescriptionTitle;
     private com.toedter.calendar.JDateChooser toolbar__ExpiryInput;
     private javax.swing.JLabel toolbar__ExpiryTitle;
-    private javax.swing.JTextField toolbar__IDInput;
-    private javax.swing.JLabel toolbar__IDTitle;
     private javax.swing.JTextField toolbar__ManafacturerInput;
     private javax.swing.JLabel toolbar__ManafacturerTitle;
     private javax.swing.JTextField toolbar__NameInput;
@@ -3230,11 +3204,17 @@ public final class Main extends javax.swing.JPanel implements ListSelectionListe
     public void setProductFromSelected() throws ParseException{
         int row = productsTable.getSelectedRow();
         if (row >= 0) {
-            toolbar__IDInput.setText(productsTable.getModel().getValueAt(row, 0).toString());
             toolbar__NameInput.setText(productsTable.getModel().getValueAt(row, 1).toString());
             toolbar__CategoryInput.setSelectedItem(productsTable.getModel().getValueAt(row, 2).toString());
             toolbar__QuantityInput.setText(productsTable.getModel().getValueAt(row, 3).toString());
-            toolbar__PriceInput.setText(BigDecimalConverter.currencyParse(productsTable.getModel().getValueAt(row, 4).toString()).toString());
+            String price = BigDecimalConverter.currencyParse(productsTable.getModel().getValueAt(row, 4).toString()).toString();
+            NumberFormat currencyFormat = NumberFormat.getCurrencyInstance();
+            DecimalFormatSymbols decimalFormatSymbols = ((DecimalFormat) currencyFormat).getDecimalFormatSymbols();
+            decimalFormatSymbols.setCurrencySymbol("");
+            ((DecimalFormat) currencyFormat).setDecimalFormatSymbols(decimalFormatSymbols);
+            price = currencyFormat.format(new BigDecimal(price)).trim();
+            price = price.substring(0, price.length() - 1);
+            toolbar__PriceInput.setText(price);
             toolbar__ExpiryInput.setDate(new SimpleDateFormat(DATE_FORMAT).parse(productsTable.getModel().getValueAt(row, 5).toString()));
             toolbar__ManafacturerInput.setText(productsTable.getModel().getValueAt(row, 6).toString());
             if (ProductServices.getInstance().getSelectedProduct() != null){
