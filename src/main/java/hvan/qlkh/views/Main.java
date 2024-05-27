@@ -43,8 +43,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.regex.Pattern;
 import javax.imageio.ImageIO;
 import javax.swing.JDialog;
@@ -927,6 +925,9 @@ public final class Main extends javax.swing.JPanel implements ListSelectionListe
             public void keyPressed(java.awt.event.KeyEvent evt) {
                 toolbar__SearchMinInputKeyPressed(evt);
             }
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                toolbar__SearchMinInputKeyReleased(evt);
+            }
         });
 
         toolbar__SearchMaxInput.setFont(new java.awt.Font("Segoe UI", 0, 15)); // NOI18N
@@ -939,6 +940,9 @@ public final class Main extends javax.swing.JPanel implements ListSelectionListe
         toolbar__SearchMaxInput.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyPressed(java.awt.event.KeyEvent evt) {
                 toolbar__SearchMaxInputKeyPressed(evt);
+            }
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                toolbar__SearchMaxInputKeyReleased(evt);
             }
         });
 
@@ -2088,31 +2092,35 @@ public final class Main extends javax.swing.JPanel implements ListSelectionListe
                                     }
                                     else{
                                         if (nameCheck == quantityCheck == priceCheck == manafacturerCheck){
-                                            String path = toolbar__ThumbnailInput.getText();
-                                            if (!path.equals("")){
-                                                try {
-                                                    File thumbnail = new File(IMAGES_DIR + path.substring(path.lastIndexOf("\\") + 1, path.lastIndexOf(".")) + ".png");
-                                                    BufferedImage bufferedImage = ImageIO.read(new File(path));
-                                                    ImageIO.write(Scalr.resize(bufferedImage, Scalr.Method.ULTRA_QUALITY, Scalr.Mode.AUTOMATIC, 140, 180), "png", thumbnail);
-                                                    toolbar__ThumbnailInput.setText(IMAGES_DIR + path.substring(path.lastIndexOf("\\") + 1, path.lastIndexOf(".")) + ".png");
-                                                } catch (IOException ex) {
-                                                    showMessage(UNKNOWN_ERROR_DIALOG_MESSAGE, false);
+                                            try {
+                                                String path = toolbar__ThumbnailInput.getText();
+                                                if (!path.equals("")){
+                                                    try {
+                                                        File thumbnail = new File(IMAGES_DIR + path.substring(path.lastIndexOf("\\") + 1, path.lastIndexOf(".")) + ".png");
+                                                        BufferedImage bufferedImage = ImageIO.read(new File(path));
+                                                        ImageIO.write(Scalr.resize(bufferedImage, Scalr.Method.ULTRA_QUALITY, Scalr.Mode.AUTOMATIC, 140, 180), "png", thumbnail);
+                                                        toolbar__ThumbnailInput.setText(IMAGES_DIR + path.substring(path.lastIndexOf("\\") + 1, path.lastIndexOf(".")) + ".png");
+                                                    } catch (IOException ex) {
+                                                        showMessage(UNKNOWN_ERROR_DIALOG_MESSAGE, false);
+                                                    }
                                                 }
+                                                Product temp = new Product(IdGenerator(toolbar__CategoryInput.getSelectedItem().toString()), toolbar__NameInput.getText(), (String) toolbar__CategoryInput.getSelectedItem(), Integer.parseInt(toolbar__QuantityInput.getText()), BigDecimalConverter.currencyParse(toolbar__PriceInput.getText()), toolbar__ExpiryInput.getDate(), toolbar__ManafacturerInput.getText());
+                                                if(!toolbar__ThumbnailInput.getText().equals("") || toolbar__ThumbnailInput.getText() == null){
+                                                    temp.setThumbnail(toolbar__ThumbnailInput.getText());
+                                                }
+                                                if (!toolbar__DescriptionInput.getText().equals("") || toolbar__DescriptionInput.getText() == null){
+                                                    temp.setDescription(toolbar__DescriptionInput.getText());
+                                                }
+                                                ProductDAO.getInstance().create(temp);
+                                                appController.setProductsTable(productsTable, ProductServices.getInstance().getProducts());
+                                                resetToolbar(true);
+                                                showMessage("Thêm mới sản phẩm thành công!", true);
+                                                setSort(ProductServices.getInstance().getProducts());
+                                                setStatistic();
+                                                setProductTemplates(ProductServices.getInstance().getProducts());
+                                            } catch (ParseException ex) {
+                                                showMessage( UNKNOWN_ERROR_DIALOG_MESSAGE, false);
                                             }
-                                            Product temp = new Product(IdGenerator(toolbar__CategoryInput.getSelectedItem().toString()), toolbar__NameInput.getText(), (String) toolbar__CategoryInput.getSelectedItem(), Integer.parseInt(toolbar__QuantityInput.getText()), new BigDecimal(toolbar__PriceInput.getText()), toolbar__ExpiryInput.getDate(), toolbar__ManafacturerInput.getText());
-                                            if(!toolbar__ThumbnailInput.getText().equals("") || toolbar__ThumbnailInput.getText() == null){
-                                                temp.setThumbnail(toolbar__ThumbnailInput.getText());
-                                            }
-                                            if (!toolbar__DescriptionInput.getText().equals("") || toolbar__DescriptionInput.getText() == null){
-                                                temp.setDescription(toolbar__DescriptionInput.getText());
-                                            }
-                                            ProductDAO.getInstance().create(temp);
-                                            appController.setProductsTable(productsTable, ProductServices.getInstance().getProducts());
-                                            resetToolbar(true);
-                                            showMessage("Thêm mới sản phẩm thành công!", true);
-                                            setSort(ProductServices.getInstance().getProducts());
-                                            setStatistic();
-                                            setProductTemplates(ProductServices.getInstance().getProducts());
                                         }
                                     }
                                 }
@@ -2554,14 +2562,18 @@ public final class Main extends javax.swing.JPanel implements ListSelectionListe
             }
         }
         if (toolbar__SearchInput.getSelectedItem().toString().equals(PRICE)){
-            BigDecimal minPrice = new BigDecimal(toolbar__SearchMinInput.getText());
-            BigDecimal maxPrice = new BigDecimal(toolbar__SearchMaxInput.getText());
-            if (accessPage == PAGES_HOME){
-                appController.setProductsTable(productsTable, ProductServices.getInstance().filterByPrice(minPrice, maxPrice));
-            }
-            if (accessPage == PAGES_PRODUCTS){
-                filter(ProductServices.getInstance().filterByPrice(minPrice, maxPrice));
-                productSearchModify = true;
+            try {
+                BigDecimal minPrice = BigDecimalConverter.currencyParse(toolbar__SearchMinInput.getText());
+                BigDecimal maxPrice = BigDecimalConverter.currencyParse(toolbar__SearchMaxInput.getText());
+                if (accessPage == PAGES_HOME){
+                    appController.setProductsTable(productsTable, ProductServices.getInstance().filterByPrice(minPrice, maxPrice));
+                }
+                if (accessPage == PAGES_PRODUCTS){
+                    filter(ProductServices.getInstance().filterByPrice(minPrice, maxPrice));
+                    productSearchModify = true;
+                }
+            } catch (ParseException ex) {
+                showMessage(UNKNOWN_ERROR_DIALOG_MESSAGE, false);
             }
         }
         if (toolbar__SearchInput.getSelectedItem().toString().equals(EXPIRY)){
@@ -3082,6 +3094,38 @@ public final class Main extends javax.swing.JPanel implements ListSelectionListe
             }
         }
     }//GEN-LAST:event_toolbar__PriceInputKeyReleased
+
+    private void toolbar__SearchMinInputKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_toolbar__SearchMinInputKeyReleased
+        if (toolbar__SearchInput.getSelectedItem().toString().equals("Đơn giá")){
+            String price = toolbar__SearchMinInput.getText().replaceAll("\\.", "");
+            Pattern pattern = Pattern.compile("^\\d+$");
+            if (pattern.matcher(price).find()){
+                NumberFormat currencyFormat = NumberFormat.getCurrencyInstance();
+                DecimalFormatSymbols decimalFormatSymbols = ((DecimalFormat) currencyFormat).getDecimalFormatSymbols();
+                decimalFormatSymbols.setCurrencySymbol("");
+                ((DecimalFormat) currencyFormat).setDecimalFormatSymbols(decimalFormatSymbols);
+                price = currencyFormat.format(new BigDecimal(price)).trim();
+                price = price.substring(0, price.length() - 1);
+                toolbar__SearchMinInput.setText(price);
+            }
+        }
+    }//GEN-LAST:event_toolbar__SearchMinInputKeyReleased
+
+    private void toolbar__SearchMaxInputKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_toolbar__SearchMaxInputKeyReleased
+        if (toolbar__SearchInput.getSelectedItem().toString().equals("Đơn giá")){
+            String price = toolbar__SearchMaxInput.getText().replaceAll("\\.", "");
+            Pattern pattern = Pattern.compile("^\\d+$");
+            if (pattern.matcher(price).find()){
+                NumberFormat currencyFormat = NumberFormat.getCurrencyInstance();
+                DecimalFormatSymbols decimalFormatSymbols = ((DecimalFormat) currencyFormat).getDecimalFormatSymbols();
+                decimalFormatSymbols.setCurrencySymbol("");
+                ((DecimalFormat) currencyFormat).setDecimalFormatSymbols(decimalFormatSymbols);
+                price = currencyFormat.format(new BigDecimal(price)).trim();
+                price = price.substring(0, price.length() - 1);
+                toolbar__SearchMaxInput.setText(price);
+            }
+        }
+    }//GEN-LAST:event_toolbar__SearchMaxInputKeyReleased
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel authorization__Filter;
